@@ -1,12 +1,13 @@
 package com.branas.domain.services;
 
 import com.branas.domain.DTO.AccountInput;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceTest {
@@ -31,8 +32,7 @@ class AccountServiceTest {
         AccountService accountService = new AccountService();
         UUID accountId = accountService.signup(input);
         //then
-        Assertions.assertNotNull(accountId);
-
+        assertThat(accountId).isNotNull();
     }
 
     @Test
