@@ -10,9 +10,6 @@ import java.util.UUID;
 
 public class AccountService {
 
-    public AccountService() {
-    }
-
     public void sendEmail(String email, String subject, String message) {
         System.out.println(email + " " + subject + " " + message);
     }
@@ -55,7 +52,7 @@ public class AccountService {
         } else return false;
     }
 
-    public void signup(AccountInput input) throws Exception {
+    public UUID signup(AccountInput input) throws Exception {
         try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456")) {
             try {
                 UUID accountId = UUID.randomUUID();
@@ -67,13 +64,32 @@ public class AccountService {
                 try (PreparedStatement statement = connection.prepareStatement("select * from cccat13.account where email = ?")) {
                     statement.setString(1, input.email());
                     existingAccount = statement.executeQuery();
-                }
-                if (!existingAccount.next()) {
-                    if (input.name().matches("[a-zA-Z] [a-zA-Z]+")) {
-                        if (input.email().matches("^(.+)@(.+)$")) {
-                            if (validateCpf(input.cpf())) {
-                                if (input.isDriver()) {
-                                    if (input.carPlate().matches("[A-Z]{3}[0-9]{4}")) {
+                    if (!existingAccount.next()) {
+                        if (input.name().matches("[a-zA-Z]+ [a-zA-Z]+")) {
+                            if (input.email().matches("^(.+)@(.+)$")) {
+                                if (validateCpf(input.cpf())) {
+                                    if (input.isDriver()) {
+                                        if (input.carPlate().matches("[A-Z]{3}[0-9]{4}")) {
+                                            try (PreparedStatement insertStatement = connection.prepareStatement("insert into cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                                                insertStatement.setObject(1, accountId);
+                                                insertStatement.setString(2, input.name());
+                                                insertStatement.setString(3, input.email());
+                                                insertStatement.setString(4, input.cpf());
+                                                insertStatement.setString(5, input.carPlate());
+                                                insertStatement.setBoolean(6, input.isPassenger());
+                                                insertStatement.setBoolean(7, input.isDriver());
+                                                insertStatement.setDate(8, new java.sql.Date(date.getTime()));
+                                                insertStatement.setBoolean(9, false);
+                                                insertStatement.setObject(10, verificationCode);
+                                                insertStatement.executeUpdate();
+                                            }
+
+                                            sendEmail(input.email(), "Verification", "Please verify your code at first login " + verificationCode);
+                                            return accountId;
+                                        } else {
+                                            throw new Exception("Invalid plate");
+                                        }
+                                    } else {
                                         try (PreparedStatement insertStatement = connection.prepareStatement("insert into cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                                             insertStatement.setObject(1, accountId);
                                             insertStatement.setString(2, input.name());
@@ -87,39 +103,21 @@ public class AccountService {
                                             insertStatement.setObject(10, verificationCode);
                                             insertStatement.executeUpdate();
                                         }
-
                                         sendEmail(input.email(), "Verification", "Please verify your code at first login " + verificationCode);
-                                    } else {
-                                        throw new Exception("Invalid plate");
+                                        return accountId;
                                     }
                                 } else {
-                                    try (PreparedStatement insertStatement = connection.prepareStatement("insert into cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                                        insertStatement.setObject(1, accountId);
-                                        insertStatement.setString(2, input.name());
-                                        insertStatement.setString(3, input.email());
-                                        insertStatement.setString(4, input.cpf());
-                                        insertStatement.setString(5, input.carPlate());
-                                        insertStatement.setBoolean(6, input.isPassenger());
-                                        insertStatement.setBoolean(7, input.isDriver());
-                                        insertStatement.setDate(8, new java.sql.Date(date.getTime()));
-                                        insertStatement.setBoolean(9, false);
-                                        insertStatement.setObject(10, verificationCode);
-                                        insertStatement.executeUpdate();
-                                    }
-
-                                    sendEmail(input.email(), "Verification", "Please verify your code at first login " + verificationCode);
+                                    throw new Exception("Invalid cpf");
                                 }
                             } else {
-                                throw new Exception("Invalid cpf");
+                                throw new Exception("Invalid email");
                             }
                         } else {
-                            throw new Exception("Invalid email");
+                            throw new Exception("Invalid name");
                         }
-                    } else {
-                        throw new Exception("Invalid name");
+                    }  else {
+                        throw new Exception("Account already exists");
                     }
-                } else {
-                    throw new Exception("Account already exists");
                 }
             } finally {
                 connection.close();
