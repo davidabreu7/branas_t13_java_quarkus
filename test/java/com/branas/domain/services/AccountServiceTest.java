@@ -24,7 +24,7 @@ class AccountServiceTest {
         //given
         AccountInput input = new AccountInput(
                 "John Doe",
-                "john.doe@gmail.com",
+                "john.doe%d@gmail.com".formatted(System.currentTimeMillis()),
                 "95818705552",
                 false);
         //when
