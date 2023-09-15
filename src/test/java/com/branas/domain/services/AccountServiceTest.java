@@ -13,21 +13,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AccountServiceTest {
 
     @Test
-    void sendEmail() {
-    }
-
-    @Test
-    void validateCpf() {
-    }
-
-    @Test
     void ShouldCreatePassanger() throws Exception {
         //given
-        AccountInput input = new AccountInput(
-                "John Doe",
-                "john.doe%d@gmail.com".formatted(System.currentTimeMillis()),
-                "95818705552",
-                false);
+        AccountInput input = AccountInput.builder()
+                .isPassenger(true)
+                .name("John Doe")
+                .email("john.doe%d@gmail.com".formatted(System.currentTimeMillis()))
+                .cpf("95818705552")
+                .build();
         //when
         AccountService accountService = new AccountService();
         UUID accountId = accountService.signup(input);
@@ -36,6 +29,21 @@ class AccountServiceTest {
     }
 
     @Test
-    void getAccount() {
+    void ShouldCreateDriver() throws Exception {
+        //given
+        AccountInput input = AccountInput.builder()
+                .isDriver(true)
+                .name("John Doe")
+                .email("john.doe%d@gmail.com".formatted(System.currentTimeMillis()))
+                .cpf("95818705552")
+                .carPlate("ABC1234")
+                .build();
+        //when
+        AccountService accountService = new AccountService();
+        UUID accountId = accountService.signup(input);
+        //then
+        assertThat(accountId).isNotNull();
     }
+
+
 }
