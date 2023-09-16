@@ -66,7 +66,7 @@ public class AccountService {
                     existingAccount = statement.executeQuery();
                     if (!existingAccount.next()) {
                         if (input.name().matches("[a-zA-Z]+ [a-zA-Z]+")) {
-                            if (input.email().matches("^(.+)@(.+)$")) {
+                            if (input.email().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
                                 if (validateCpf(input.cpf())) {
                                     if (input.isDriver()) {
                                         if (input.carPlate().matches("[A-Z]{3}[0-9]{4}")) {
