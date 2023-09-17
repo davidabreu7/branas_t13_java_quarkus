@@ -10,7 +10,7 @@ public class CpfValidator {
         if (cpf == null)
             return false;
         cpf = cleanCpf(cpf);
-        if (isValidLenght(cpf))
+        if (isValidLength(cpf))
             return false;
         String finalStr = cpf;
         if (allDigitsTheSame(cpf, finalStr))
@@ -30,7 +30,7 @@ public class CpfValidator {
         return cpf.chars().allMatch(c -> c == finalStr.charAt(0));
     }
 
-    private static boolean isValidLenght(String cpf) {
+    private static boolean isValidLength(String cpf) {
         return cpf.length() != 11;
     }
 
