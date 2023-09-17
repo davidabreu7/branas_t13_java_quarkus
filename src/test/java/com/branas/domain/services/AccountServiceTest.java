@@ -2,6 +2,7 @@ package com.branas.domain.services;
 
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
+import com.branas.utils.CpfValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,7 +64,7 @@ class AccountServiceTest {
            accountService.signup(input);
         } catch (Exception e) {
             //then
-            assertThat(accountService.validateCpf(input.cpf())).isFalse();
+            assertThat(CpfValidator.validateCpf(input.cpf())).isFalse();
             assertThat(e).isInstanceOf(Exception.class)
                     .hasMessageContaining("Invalid cpf");
         }
