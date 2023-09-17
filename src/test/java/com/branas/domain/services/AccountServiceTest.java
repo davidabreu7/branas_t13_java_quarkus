@@ -5,25 +5,15 @@ import com.branas.domain.entities.Account;
 import com.branas.utils.CpfValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
+import static com.branas.utils.TestValues.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
 class AccountServiceTest {
 
-    static final String VALID_NAME = "John Doe";
-    static final String INVALID_NAME = "John";
-    static final String VALID_CPF = "95818705552";
-    static final String INVALID_CPF = "95818705500";
     static String VALID_EMAIL;
-    static final String INVALID_EMAIL = "john.doe@gmail";
-    static final String ACCOUNT_EXISTS = "jonh.doe@gmail.com";
-    static final String VALID_PLATE = "ABC1234";
-    static final String INVALID_PLATE = "ABC12345";
     AccountService accountService;
     @BeforeEach
     void setup() {
@@ -36,9 +26,9 @@ class AccountServiceTest {
         //given
        AccountInput validPassenger = AccountInput.builder()
                 .isPassenger(true)
-                .name(VALID_NAME)
+                .name(VALID_NAME.value())
                 .email(VALID_EMAIL)
-                .cpf(VALID_CPF)
+                .cpf(VALID_CPF.value())
                 .build();
         //when
         UUID accountId = accountService.signup(validPassenger);
@@ -55,9 +45,9 @@ class AccountServiceTest {
         //given
         AccountInput input = AccountInput.builder()
                 .isPassenger(true)
-                .name(VALID_NAME)
+                .name(VALID_NAME.value())
                 .email(VALID_EMAIL)
-                .cpf(INVALID_CPF)
+                .cpf(INVALID_CPF.value())
                 .build();
         //when
         try {
@@ -74,9 +64,9 @@ class AccountServiceTest {
         //given
         AccountInput input = AccountInput.builder()
                 .isPassenger(true)
-                .name(INVALID_NAME)
+                .name(INVALID_NAME.value())
                 .email(VALID_EMAIL)
-                .cpf(VALID_CPF)
+                .cpf(VALID_CPF.value())
                 .build();
         //when
         try {
@@ -92,9 +82,9 @@ class AccountServiceTest {
         //given
         AccountInput input = AccountInput.builder()
                 .isPassenger(true)
-                .name(VALID_NAME)
-                .email(INVALID_EMAIL)
-                .cpf(VALID_CPF)
+                .name(VALID_NAME.value())
+                .email(INVALID_EMAIL.value())
+                .cpf(VALID_CPF.value())
                 .build();
         //when
         try {
@@ -110,9 +100,9 @@ class AccountServiceTest {
         //given
         AccountInput input = AccountInput.builder()
                 .isPassenger(true)
-                .name(VALID_NAME)
-                .email(ACCOUNT_EXISTS)
-                .cpf(VALID_CPF)
+                .name(VALID_NAME.value())
+                .email(ACCOUNT_EXISTS.value())
+                .cpf(VALID_CPF.value())
                 .build();
         //when
         try {
@@ -128,10 +118,10 @@ class AccountServiceTest {
         //given
        AccountInput validDriver = AccountInput.builder()
                 .isDriver(true)
-                .name(VALID_NAME)
+                .name(VALID_NAME.value())
                 .email(VALID_EMAIL)
-                .cpf(VALID_CPF)
-                .carPlate(VALID_PLATE)
+                .cpf(VALID_CPF.value())
+                .carPlate(VALID_PLATE.value())
                 .build();
         //when
         UUID accountId = accountService.signup(validDriver);
@@ -149,10 +139,10 @@ class AccountServiceTest {
         //given
         AccountInput input = AccountInput.builder()
                 .isDriver(true)
-                .name(VALID_NAME)
+                .name(VALID_NAME.value())
                 .email(VALID_EMAIL)
-                .cpf(VALID_CPF)
-                .carPlate(INVALID_PLATE)
+                .cpf(VALID_CPF.value())
+                .carPlate(INVALID_PLATE.value())
                 .build();
         //when
        try {

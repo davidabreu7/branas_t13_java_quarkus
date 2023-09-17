@@ -3,12 +3,14 @@ package com.branas.domain.services;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
 import com.branas.utils.CpfValidator;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.security.SecureRandom;
 import java.sql.*;
 import java.util.Date;
 import java.util.UUID;
 
+@ApplicationScoped
 public class AccountService {
 
     public void sendEmail(String email, String subject, String message) {
