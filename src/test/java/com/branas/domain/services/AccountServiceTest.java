@@ -3,6 +3,8 @@ package com.branas.domain.services;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
 import com.branas.utils.CpfValidator;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,13 +13,15 @@ import java.util.UUID;
 import static com.branas.utils.TestValues.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@QuarkusTest
 class AccountServiceTest {
 
     static String VALID_EMAIL;
+    @Inject
     AccountService accountService;
+
     @BeforeEach
     void setup() {
-        accountService = new AccountService();
         VALID_EMAIL = "john.doe%d@gmail.com".formatted(System.currentTimeMillis());
     }
 

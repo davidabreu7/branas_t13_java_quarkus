@@ -1,6 +1,5 @@
 package com.branas.utils;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -19,5 +18,4 @@ class CpfValidatorTest {
     void ShouldNotValidateCpf(String cpf) {
         assertThat(CpfValidator.validateCpf(cpf)).isFalse();
     }
-
 }
