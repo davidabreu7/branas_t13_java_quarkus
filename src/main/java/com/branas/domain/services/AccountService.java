@@ -30,8 +30,8 @@ public class AccountService {
                 UUID verificationCode = new UUID(random.nextLong(), random.nextLong());
                 Date date = new Date();
 
-                ResultSet existingAccount = accountDAO.getAccountByEmail(input);
-                if (existingAccount.next())
+                Account existingAccount = accountDAO.getAccountByEmail(input);
+                if (existingAccount != null)
                     throw new Exception("Account already exists");
                 if (!input.name().matches("[a-zA-Z]+ [a-zA-Z]+"))
                     throw new Exception("Invalid name");
@@ -41,19 +41,7 @@ public class AccountService {
                     throw new Exception("Invalid cpf");
                 if (input.isDriver() && (!input.carPlate().matches("[A-Z]{3}[0-9]{4}")))
                     throw new Exception("Invalid plate");
-                try (PreparedStatement insertStatement = connection.prepareStatement("insert into cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    insertStatement.setObject(1, accountId);
-                    insertStatement.setString(2, input.name());
-                    insertStatement.setString(3, input.email());
-                    insertStatement.setString(4, input.cpf());
-                    insertStatement.setString(5, input.carPlate());
-                    insertStatement.setBoolean(6, input.isPassenger());
-                    insertStatement.setBoolean(7, input.isDriver());
-                    insertStatement.setDate(8, new java.sql.Date(date.getTime()));
-                    insertStatement.setBoolean(9, false);
-                    insertStatement.setObject(10, verificationCode);
-                    insertStatement.executeUpdate();
-                }
+                accountDAO.saveAccount(input, accountId, date, verificationCode);
                 sendEmail(input.email(), "Verification", "Please verify your code at first login " + verificationCode);
                 return accountId;
             } catch (SQLException e) {
