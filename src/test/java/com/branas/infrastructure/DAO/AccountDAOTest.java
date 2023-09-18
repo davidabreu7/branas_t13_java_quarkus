@@ -48,10 +48,27 @@ class AccountDAOTest {
 
     @Test
     void saveAccount() {
+        UUID accountId = UUID.randomUUID();
         try {
-            accountDAO.saveAccount(validPassenger, UUID.fromString("33ec3d7c-c395-49ad-845e-d72c46307505"), new Date(), UUID.fromString("33ec3d7c-c395-49ad-845e-d72c46307505"));
+            accountDAO.saveAccount(validPassenger, accountId, new Date(), accountId);
             Account account = accountDAO.getAccountByEmail(validPassenger);
             assertThat(account).isNotNull()
+                    .hasFieldOrPropertyWithValue("accountId", accountId)
+                    .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
+                    .hasFieldOrPropertyWithValue("email", validPassenger.email());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void ShouldGetAccountById() {
+        UUID accountId = UUID.randomUUID();
+        try {
+            accountDAO.saveAccount(validPassenger, accountId, new Date(), accountId);
+            Account account = accountDAO.getAccountById(accountId);
+            assertThat(account).isNotNull()
+                    .hasFieldOrPropertyWithValue("accountId", accountId)
                     .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
                     .hasFieldOrPropertyWithValue("email", validPassenger.email());
         } catch (SQLException e) {

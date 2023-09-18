@@ -24,27 +24,12 @@ public class AccountDAO {
     }
 
     public Account getAccountByEmail(AccountInput accountInput) throws SQLException {
-        Account existingAccount;
+        Account existingAccount = null;
         ResultSet result;
         try (PreparedStatement statement = getConnection().prepareStatement("select * from cccat13.account where email = ?")) {
             statement.setString(1, accountInput.email());
             result = statement.executeQuery();
-            if (result.next()) {
-                existingAccount = new Account(
-                        result.getObject("account_id", java.util.UUID.class),
-                        result.getString("name"),
-                        result.getString("email"),
-                        result.getString("cpf"),
-                        result.getString("car_plate"),
-                        result.getBoolean("is_passenger"),
-                        result.getBoolean("is_driver"),
-                        result.getDate("date"),
-                        result.getBoolean("is_verified"),
-                        result.getObject("verification_code", java.util.UUID.class)
-                );
-            } else {
-                existingAccount = null;
-            }
+            existingAccount = getAccount(result);
         } catch (SQLException e) {
             throw new SQLException("Error while getting account by email");
         }
@@ -70,7 +55,37 @@ public class AccountDAO {
     }
 
 
+    public Account getAccountById(UUID accountId) throws SQLException {
+        ResultSet result;
+        Account account = null;
+        try (PreparedStatement statement = getConnection().prepareStatement("select * from cccat13.account where account_id = ?")) {
+            statement.setObject(1, accountId);
+            result = statement.executeQuery();
+            account = getAccount(result);
+        } catch (SQLException e) {
+            throw new SQLException("Error while getting account by email");
+        }
+        return account;
+    }
 
+    private static Account getAccount(ResultSet result) throws SQLException {
+        Account account = null;
+        if (result.next()) {
+            account = new Account(
+                    result.getObject("account_id", UUID.class),
+                    result.getString("name"),
+                    result.getString("email"),
+                    result.getString("cpf"),
+                    result.getString("car_plate"),
+                    result.getBoolean("is_passenger"),
+                    result.getBoolean("is_driver"),
+                    result.getDate("date"),
+                    result.getBoolean("is_verified"),
+                    result.getObject("verification_code", UUID.class)
+            );
+        }
+        return account;
+    }
 }
 
 
