@@ -1,7 +1,7 @@
 package com.branas.infrastructure.DAO;
 
-import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
+import com.branas.domain.ports.AccountDAO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -10,11 +10,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.UUID;
 
 @ApplicationScoped
-public class AccountDAO {
+public class AccountDAOImpl implements AccountDAO {
 
     @Inject
     DataSource dataSource;
@@ -23,11 +22,11 @@ public class AccountDAO {
         return dataSource.getConnection();
     }
 
-    public Account getAccountByEmail(AccountInput accountInput) throws SQLException {
+    public Account getAccountByEmail(String email) throws SQLException {
         Account existingAccount = null;
         ResultSet result;
         try (PreparedStatement statement = getConnection().prepareStatement("select * from cccat13.account where email = ?")) {
-            statement.setString(1, accountInput.email());
+            statement.setString(1, email);
             result = statement.executeQuery();
             existingAccount = getAccount(result);
         } catch (SQLException e) {
@@ -36,18 +35,18 @@ public class AccountDAO {
         return existingAccount;
     }
 
-    public void saveAccount(AccountInput input, UUID accountId, Date date, UUID verificationCode) throws SQLException {
+    public void save(Account input) throws SQLException{
         try (PreparedStatement insertStatement = getConnection().prepareStatement("insert into cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            insertStatement.setObject(1, accountId);
-            insertStatement.setString(2, input.name());
-            insertStatement.setString(3, input.email());
-            insertStatement.setString(4, input.cpf());
-            insertStatement.setString(5, input.carPlate());
+            insertStatement.setObject(1, input.getAccountId());
+            insertStatement.setString(2, input.getName());
+            insertStatement.setString(3, input.getEmail());
+            insertStatement.setString(4, input.getCpf());
+            insertStatement.setString(5, input.getCarPlate());
             insertStatement.setBoolean(6, input.isPassenger());
             insertStatement.setBoolean(7, input.isDriver());
-            insertStatement.setDate(8, new java.sql.Date(date.getTime()));
+            insertStatement.setDate(8, new java.sql.Date(input.getDate().getTime()));
             insertStatement.setBoolean(9, false);
-            insertStatement.setObject(10, verificationCode);
+            insertStatement.setObject(10, input.getVerificationCode());
             insertStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error while saving account");

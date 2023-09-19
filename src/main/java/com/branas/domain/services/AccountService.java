@@ -2,7 +2,7 @@ package com.branas.domain.services;
 
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
-import com.branas.infrastructure.DAO.AccountDAO;
+import com.branas.domain.ports.AccountDAO;
 import com.branas.utils.CpfValidator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -23,14 +23,12 @@ public class AccountService {
     }
 
     public UUID signup(AccountInput input) throws Exception {
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456")) {
-            try {
                 UUID accountId = UUID.randomUUID();
                 SecureRandom random = new SecureRandom();
                 UUID verificationCode = new UUID(random.nextLong(), random.nextLong());
                 Date date = new Date();
 
-                Account existingAccount = accountDAO.getAccountByEmail(input);
+                Account existingAccount = accountDAO.getAccountByEmail(input.email());
                 if (existingAccount != null)
                     throw new Exception("Account already exists");
                 if (!input.name().matches("[a-zA-Z]+ [a-zA-Z]+"))
@@ -41,37 +39,33 @@ public class AccountService {
                     throw new Exception("Invalid cpf");
                 if (input.isDriver() && (!input.carPlate().matches("[A-Z]{3}[0-9]{4}")))
                     throw new Exception("Invalid plate");
-                accountDAO.saveAccount(input, accountId, date, verificationCode);
-                sendEmail(input.email(), "Verification", "Please verify your code at first login " + verificationCode);
-                return accountId;
-            } catch (SQLException e) {
-                System.out.println("Connection failure.");
-                e.printStackTrace();
-            }
-        }
-        return null;
+                Account account = new Account(
+                        accountId,
+                        input.name(),
+                        input.email(),
+                        input.cpf(),
+                        input.carPlate(),
+                        input.isPassenger(),
+                        input.isDriver(),
+                        date,
+                        false,
+                        verificationCode
+                );
+                try {
+                    accountDAO.save(account);
+                    sendEmail(input.email(), "Verification", "Please verify your code at first login " + verificationCode);
+                    return account.getAccountId();
+                }
+                catch (SQLException e) {
+                    throw new SQLException("Error while saving account");
+                }
     }
 
     public Account getAccount(UUID accountId) throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/app", "postgres", "123456");
-        PreparedStatement statement = connection.prepareStatement("select * from cccat13.account where account_id = ?");
-        statement.setObject(1, accountId);
-        ResultSet resultSet = statement.executeQuery();
-        Account account = null;
-        if (resultSet.next()) {
-            account = new Account();
-            account.setAccountId((UUID) resultSet.getObject("account_id"));
-            account.setName(resultSet.getString("name"));
-            account.setEmail(resultSet.getString("email"));
-            account.setCpf(resultSet.getString("cpf"));
-            account.setCarPlate(resultSet.getString("car_plate"));
-            account.setPassenger(resultSet.getBoolean("is_passenger"));
-            account.setDriver(resultSet.getBoolean("is_driver"));
-            account.setDate(resultSet.getDate("date"));
-            account.setVerified(resultSet.getBoolean("is_verified"));
-            account.setVerificationCode((UUID) resultSet.getObject("verification_code"));
+      try {
+          return accountDAO.getAccountById(accountId);
+        } catch (Exception e) {
+            throw new SQLException("Error while getting account by id");
         }
-        connection.close();
-        return account;
     }
 }

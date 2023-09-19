@@ -2,27 +2,34 @@ package com.branas.domain.services;
 
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
+import com.branas.domain.ports.AccountDAO;
 import com.branas.utils.CpfValidator;
+import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
 import java.util.UUID;
 
 import static com.branas.utils.TestValues.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @QuarkusTest
 class AccountServiceTest {
 
     static String VALID_EMAIL;
+    @InjectMock
+    AccountDAO accountDAO;
     @Inject
     AccountService accountService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws Exception {
         VALID_EMAIL = "john.doe%d@gmail.com".formatted(System.currentTimeMillis());
+
     }
 
     @Test
@@ -34,18 +41,37 @@ class AccountServiceTest {
                 .email(VALID_EMAIL)
                 .cpf(VALID_CPF.value())
                 .build();
+
+        Account account =  new Account(
+                null,
+                validPassenger.name(),
+                validPassenger.email(),
+                validPassenger.cpf(),
+                validPassenger.carPlate(),
+                validPassenger.isPassenger(),
+                validPassenger.isDriver(),
+                new Date(),
+                false,
+                UUID.randomUUID()
+        );
+
+       when(accountDAO.getAccountByEmail(validPassenger.email()))
+               .thenReturn(null);
         //when
         UUID accountId = accountService.signup(validPassenger);
-        Account account = accountService.getAccount(accountId);
+        account.setAccountId(accountId);
+        when(accountDAO.getAccountById(accountId))
+                .thenReturn(account);
+        Account accountSaved = accountService.getAccount(accountId);
         //then
-        assertThat(account).isNotNull()
+        assertThat(accountSaved).isNotNull()
                 .hasFieldOrPropertyWithValue("accountId", accountId)
                 .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
                 .hasFieldOrPropertyWithValue("email", validPassenger.email());
     }
 
     @Test
-    void ShouldNotCreatePassengerWithInvalidCpf() {
+    void ShouldNotCreatePassengerWithInvalidCpf() throws Exception {
         //given
         AccountInput input = AccountInput.builder()
                 .isPassenger(true)
@@ -53,6 +79,10 @@ class AccountServiceTest {
                 .email(VALID_EMAIL)
                 .cpf(INVALID_CPF.value())
                 .build();
+
+        when(accountDAO.getAccountByEmail(input.email()))
+                .thenReturn(null);
+
         //when
         try {
            accountService.signup(input);
@@ -64,7 +94,7 @@ class AccountServiceTest {
         }
     }
     @Test
-    void ShouldNotCreatePassengerWithInvalidName() {
+    void ShouldNotCreatePassengerWithInvalidName() throws Exception {
         //given
         AccountInput input = AccountInput.builder()
                 .isPassenger(true)
@@ -72,6 +102,9 @@ class AccountServiceTest {
                 .email(VALID_EMAIL)
                 .cpf(VALID_CPF.value())
                 .build();
+        when(accountDAO.getAccountByEmail(input.email()))
+                .thenReturn(null);
+
         //when
         try {
             accountService.signup(input);
@@ -82,7 +115,7 @@ class AccountServiceTest {
         }
     }
     @Test
-    void ShouldNotCreatePassengerWithInvalidEmail() {
+    void ShouldNotCreatePassengerWithInvalidEmail() throws Exception {
         //given
         AccountInput input = AccountInput.builder()
                 .isPassenger(true)
@@ -90,6 +123,9 @@ class AccountServiceTest {
                 .email(INVALID_EMAIL.value())
                 .cpf(VALID_CPF.value())
                 .build();
+        when(accountDAO.getAccountByEmail(input.email()))
+                .thenReturn(null);
+
         //when
         try {
             accountService.signup(input);
@@ -100,7 +136,7 @@ class AccountServiceTest {
         }
     }
     @Test
-    void ShouldNotCreatePassengerWithExistingAccount() {
+    void ShouldNotCreatePassengerWithExistingAccount() throws Exception {
         //given
         AccountInput input = AccountInput.builder()
                 .isPassenger(true)
@@ -108,6 +144,8 @@ class AccountServiceTest {
                 .email(ACCOUNT_EXISTS.value())
                 .cpf(VALID_CPF.value())
                 .build();
+        when(accountDAO.getAccountByEmail(input.email()))
+                .thenReturn(new Account());
         //when
         try {
             accountService.signup(input);
@@ -127,13 +165,30 @@ class AccountServiceTest {
                 .cpf(VALID_CPF.value())
                 .carPlate(VALID_PLATE.value())
                 .build();
+       Account account =  new Account(
+               null,
+                validDriver.name(),
+                validDriver.email(),
+                validDriver.cpf(),
+                validDriver.carPlate(),
+                validDriver.isPassenger(),
+                validDriver.isDriver(),
+                new Date(),
+                false,
+                UUID.randomUUID()
+        );
+         when(accountDAO.getAccountByEmail(validDriver.email()))
+                 .thenReturn(null);
         //when
-        UUID accountId = accountService.signup(validDriver);
-        Account account = accountService.getAccount(accountId);
+        UUID accountIdSaved = accountService.signup(validDriver);
+        account.setAccountId(accountIdSaved);
+        when(accountDAO.getAccountById(accountIdSaved))
+                .thenReturn(account);
+        Account accountSaved = accountService.getAccount(accountIdSaved);
         //then
-        assertThat(account)
+        assertThat(accountSaved)
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("accountId", accountId)
+                .hasFieldOrPropertyWithValue("accountId", accountIdSaved)
                 .hasFieldOrPropertyWithValue("carPlate", validDriver.carPlate())
                 .hasFieldOrPropertyWithValue("isDriver", validDriver.isDriver())
                 .hasFieldOrPropertyWithValue("email", validDriver.email());
@@ -141,6 +196,7 @@ class AccountServiceTest {
     @Test
     void ShouldNotCreateDriverWithInvalidPlate() throws Exception {
         //given
+        UUID accountId = UUID.randomUUID();
         AccountInput input = AccountInput.builder()
                 .isDriver(true)
                 .name(VALID_NAME.value())
@@ -148,6 +204,9 @@ class AccountServiceTest {
                 .cpf(VALID_CPF.value())
                 .carPlate(INVALID_PLATE.value())
                 .build();
+        when(accountDAO.getAccountByEmail(input.email()))
+                .thenReturn(null);
+
         //when
        try {
            accountService.signup(input);
