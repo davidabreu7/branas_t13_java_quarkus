@@ -79,10 +79,8 @@ class AccountServiceTest {
                 .email(VALID_EMAIL)
                 .cpf(INVALID_CPF.value())
                 .build();
-
         when(accountDAO.getAccountByEmail(input.email()))
                 .thenReturn(null);
-
         //when
         try {
            accountService.signup(input);
@@ -104,7 +102,6 @@ class AccountServiceTest {
                 .build();
         when(accountDAO.getAccountByEmail(input.email()))
                 .thenReturn(null);
-
         //when
         try {
             accountService.signup(input);
@@ -125,7 +122,6 @@ class AccountServiceTest {
                 .build();
         when(accountDAO.getAccountByEmail(input.email()))
                 .thenReturn(null);
-
         //when
         try {
             accountService.signup(input);
