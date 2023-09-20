@@ -19,7 +19,7 @@ public class Ride {
     UUID driverId;
     String status;
     BigDecimal price;
-    Float distance;
+    Double distance;
     LocalDateTime timestamp;
     Coordinate fromCoordinate;
     Coordinate toCoordinate;

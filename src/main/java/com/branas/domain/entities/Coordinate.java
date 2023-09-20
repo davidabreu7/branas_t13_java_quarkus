@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 public class Coordinate {
 
-    private Float latitude;
-    private Float longitude;
+    private Double latitude;
+    private Double longitude;
 
 }
