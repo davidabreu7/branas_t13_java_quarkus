@@ -22,7 +22,7 @@ public class RideController {
     public RestResponse<Ride> requestRide(
             @PathParam("accountId") String accountId,
             @RequestBody RidePath ridePath
-            ) {
+            ) throws Exception {
         return RestResponse.ok(rideService.requestRide(accountId, ridePath));
     }
 

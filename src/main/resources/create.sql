@@ -5,6 +5,8 @@
 -- insert into myentity (id, field) values(3, 'field-3');
 -- alter sequence myentity_seq restart with 4;
 
+create schema cccat13;
+
 create table cccat13.account (
                                  account_id uuid,
                                  name text,

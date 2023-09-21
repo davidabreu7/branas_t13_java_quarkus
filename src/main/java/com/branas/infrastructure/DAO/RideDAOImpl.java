@@ -80,6 +80,16 @@ public class RideDAOImpl implements RideDAO {
         }
     }
 
+    public Ride getRideByPassengerId(UUID passengerId) throws Exception {
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM cccat13.ride WHERE passenger_id = ? ORDER BY date DESC LIMIT 1")) {
+            preparedStatement.setObject(1, passengerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return getRide(resultSet);
+        } catch (SQLException e) {
+            throw new SQLException("Error while getting ride by passenger id", e);
+        }
+    }
+
     private Ride getRide(ResultSet resultSet) throws SQLException {
         if (resultSet.next()) {
             return new Ride(
