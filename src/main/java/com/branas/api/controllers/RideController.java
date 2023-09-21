@@ -22,14 +22,14 @@ public class RideController {
     public RestResponse<Ride> requestRide(
             @PathParam("accountId") String accountId,
             @RequestBody RidePath ridePath
-            ) {
+            ) throws Exception {
         return RestResponse.ok(rideService.requestRide(accountId, ridePath));
     }
 
     @PUT
-    @Path("/rides/accept/{rideId}")
-    public RestResponse<Ride> acceptRide(@PathParam("rideId") String rideId) {
-        return RestResponse.ok(rideService.acceptRide(rideId));
+    @Path("/rides/accept/{rideId}/{driverId}")
+    public RestResponse<Ride> acceptRide(@PathParam("rideId") String rideId, @PathParam("driverId") String driverId) throws Exception {
+        return RestResponse.ok(rideService.acceptRide(rideId, driverId));
     }
 
     @GET
