@@ -1,12 +1,12 @@
 package com.branas.domain.entities;
 
-import com.branas.infrastructure.Exceptions.InvalidValidationException;
+import com.branas.infrastructure.exceptions.ValidationErrorException;
 import com.branas.utils.CpfValidator;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -22,7 +22,7 @@ public class Account {
     private String carPlate;
     private boolean isPassenger;
     private boolean isDriver;
-    private LocalDateTime date;
+    private LocalDate date;
     private boolean isVerified;
     private UUID verificationCode;
 
@@ -46,13 +46,13 @@ public class Account {
         validateAccount(name, email, cpf, carPlate, isDriver);
         Account account = new Account(name, email, cpf, carPlate, isPassenger, isDriver);
         account.accountId = UUID.randomUUID();
-        account.date = LocalDateTime.now();
+        account.date = LocalDate.now();
         account.isVerified = false;
         account.verificationCode = UUID.randomUUID();
         return account;
     }
 
-    public static Account restore(UUID accountId, String name, String email, String cpf, String carPlate, boolean isPassenger, boolean isDriver, LocalDateTime date, boolean isVerified, UUID verificationCode) {
+    public static Account restore(UUID accountId, String name, String email, String cpf, String carPlate, boolean isPassenger, boolean isDriver, LocalDate date, boolean isVerified, UUID verificationCode) {
         validateAccount(name, email, cpf, carPlate, isDriver);
         Account account = new Account(name, email, cpf, carPlate, isPassenger, isDriver);
         account.accountId = accountId;
@@ -64,13 +64,13 @@ public class Account {
 
     private static void validateAccount(String name, String email, String cpf, String carPlate, boolean isDriver) {
         if (!name.matches("[a-zA-Z]+ [a-zA-Z]+"))
-            throw new InvalidValidationException("Invalid name");
-        if (email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"))
-            throw new InvalidValidationException("Invalid email");
+            throw new ValidationErrorException("Invalid name");
+        if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"))
+            throw new ValidationErrorException("Invalid email");
         if (!CpfValidator.validateCpf(cpf))
-            throw new InvalidValidationException("Invalid cpf");
+            throw new ValidationErrorException("Invalid cpf");
         if (isDriver && (!carPlate.matches("[A-Z]{3}[0-9]{4}")))
-            throw new InvalidValidationException("Invalid plate");
+            throw new ValidationErrorException("Invalid plate");
     }
 
     @Override

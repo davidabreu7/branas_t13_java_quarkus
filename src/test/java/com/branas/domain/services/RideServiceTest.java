@@ -5,6 +5,7 @@ import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
 import com.branas.domain.ports.AccountDAO;
 import com.branas.domain.ports.RideDAO;
+import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -37,17 +38,13 @@ class RideServiceTest {
     void setUp() throws Exception {
         UUID accountId = UUID.randomUUID();
         VALID_EMAIL = "john.doe%d@gmail.com".formatted(System.currentTimeMillis());
-        account = new Account(
-                accountId,
+        account = Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
                 VALID_CPF.value(),
                 VALID_PLATE.value(),
                 true,
-                false,
-                new Date(),
-                false,
-                UUID.randomUUID()
+                false
         );
         Ride ride = new Ride(
                         null,
@@ -89,7 +86,7 @@ class RideServiceTest {
                 .thenReturn(null);
         assertThatThrownBy(() -> rideService.requestRide(account.getAccountId().toString(),
                 new RidePath(FROM_COORDINATE, TO_COORDINATE)))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Account not found");
     }
 
@@ -98,17 +95,13 @@ class RideServiceTest {
 
         Ride ride = new Ride();
         UUID accountId = UUID.randomUUID();
-        Account account = new Account(
-                accountId,
+        Account account = Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
                 VALID_CPF.value(),
                 VALID_PLATE.value(),
                 false,
-                false,
-                new Date(),
-                false,
-                UUID.randomUUID()
+                false
         );
         when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(account);
@@ -156,17 +149,13 @@ class RideServiceTest {
         );
         UUID accountId = UUID.randomUUID();
         VALID_EMAIL = "john.doe%d@gmail.com".formatted(System.currentTimeMillis());
-        Account driver = new Account(
-                accountId,
+        Account driver =  Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
                 VALID_CPF.value(),
                 VALID_PLATE.value(),
                 false,
-                true,
-                new Date(),
-                false,
-                UUID.randomUUID()
+                true
         );
         when(rideDAO.getRideById(any(UUID.class)))
                 .thenReturn(ride);
@@ -183,17 +172,13 @@ when(accountDAO.getAccountById(any(UUID.class)))
     @Test
     void shouldNotAcceptRideWhenRideNotFound() throws Exception {
         UUID accountId = UUID.randomUUID();
-        Account driver = new Account(
-                accountId,
+        Account driver = Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
                 VALID_CPF.value(),
                 VALID_PLATE.value(),
                 false,
-                true,
-                new Date(),
-                false,
-                UUID.randomUUID()
+                true
         );
 
         when(rideDAO.getRideById(any(UUID.class)))
@@ -235,18 +220,15 @@ when(accountDAO.getAccountById(any(UUID.class)))
         when(rideDAO.getRideById(any(UUID.class)))
                 .thenReturn(ride);
         VALID_EMAIL = "john.doe%d@gmail.com".formatted(System.currentTimeMillis());
-        Account driver = new Account(
-                driverId,
+        Account driver = Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
                 VALID_CPF.value(),
                 VALID_PLATE.value(),
                 false,
-                true,
-                new Date(),
-                false,
-                UUID.randomUUID()
+                true
         );
+        driver.setAccountId(driverId);
         when(rideDAO.getRideById(any(UUID.class)))
                 .thenReturn(ride);
         when(accountDAO.getAccountById(any(UUID.class)))

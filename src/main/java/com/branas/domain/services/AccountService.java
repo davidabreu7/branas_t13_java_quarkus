@@ -3,13 +3,11 @@ package com.branas.domain.services;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
 import com.branas.domain.ports.AccountDAO;
-import com.branas.utils.CpfValidator;
+import com.branas.infrastructure.exceptions.AlreadyExistsException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.security.SecureRandom;
 import java.sql.*;
-import java.util.Date;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -23,26 +21,20 @@ public class AccountService {
     }
 
     public UUID signup(AccountInput input) throws Exception {
-
                 Account existingAccount = accountDAO.getAccountByEmail(input.email());
                 if (existingAccount != null)
-                    throw new Exception("Account already exists");
-
-                Account account = new Account(
-                        accountId,
+                    throw new AlreadyExistsException("Account already exists");
+                Account account = Account.create(
                         input.name(),
                         input.email(),
                         input.cpf(),
                         input.carPlate(),
                         input.isPassenger(),
-                        input.isDriver(),
-                        date,
-                        false,
-                        verificationCode
+                        input.isDriver()
                 );
                 try {
                     accountDAO.save(account);
-                    sendEmail(input.email(), "Verification", "Please verify your code at first login " + verificationCode);
+                    sendEmail(account.getEmail(), "Verification", "Please verify your code at first login " + account.getVerificationCode());
                     return account.getAccountId();
                 }
                 catch (SQLException e) {

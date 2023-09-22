@@ -42,17 +42,13 @@ class AccountServiceTest {
                 .cpf(VALID_CPF.value())
                 .build();
 
-        Account account =  new Account(
-                null,
+        Account account =  Account.create(
                 validPassenger.name(),
                 validPassenger.email(),
                 validPassenger.cpf(),
                 validPassenger.carPlate(),
                 validPassenger.isPassenger(),
-                validPassenger.isDriver(),
-                new Date(),
-                false,
-                UUID.randomUUID()
+                validPassenger.isDriver()
         );
 
        when(accountDAO.getAccountByEmail(validPassenger.email()))
@@ -140,8 +136,16 @@ class AccountServiceTest {
                 .email(ACCOUNT_EXISTS.value())
                 .cpf(VALID_CPF.value())
                 .build();
+        Account account = Account.create(
+                input.name(),
+                input.email(),
+                input.cpf(),
+                input.carPlate(),
+                input.isPassenger(),
+                input.isDriver()
+        );
         when(accountDAO.getAccountByEmail(input.email()))
-                .thenReturn(new Account());
+                .thenReturn(account);
         //when
         try {
             accountService.signup(input);
@@ -161,17 +165,13 @@ class AccountServiceTest {
                 .cpf(VALID_CPF.value())
                 .carPlate(VALID_PLATE.value())
                 .build();
-       Account account =  new Account(
-               null,
+       Account account =  Account.create(
                 validDriver.name(),
                 validDriver.email(),
                 validDriver.cpf(),
                 validDriver.carPlate(),
                 validDriver.isPassenger(),
-                validDriver.isDriver(),
-                new Date(),
-                false,
-                UUID.randomUUID()
+                validDriver.isDriver()
         );
          when(accountDAO.getAccountByEmail(validDriver.email()))
                  .thenReturn(null);

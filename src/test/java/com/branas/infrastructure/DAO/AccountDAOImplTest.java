@@ -55,17 +55,13 @@ class AccountDAOImplTest {
     @Test
     void saveAccount() {
         UUID accountId = UUID.randomUUID();
-        Account account = new Account(
-                accountId,
+        Account account = Account.create(
                 validPassenger.name(),
                 VALID_EMAIL,
                 validPassenger.cpf(),
                 validPassenger.carPlate(),
                 validPassenger.isPassenger(),
-                validPassenger.isDriver(),
-                new Date(),
-                false,
-                UUID.randomUUID()
+                validPassenger.isDriver()
         );
         try {
             accountDAO.save(account);
@@ -75,7 +71,7 @@ class AccountDAOImplTest {
                     .hasFieldOrPropertyWithValue("isPassenger", account.isPassenger())
                     .hasFieldOrPropertyWithValue("email", account.getEmail());
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -83,24 +79,19 @@ class AccountDAOImplTest {
 
     @Test
     void ShouldGetAccountById() {
-        UUID accountId = UUID.randomUUID();
-        Account account = new Account(
-                accountId,
+        Account account = Account.create(
                 validPassenger.name(),
                 validPassenger.email(),
                 validPassenger.cpf(),
                 validPassenger.carPlate(),
                 validPassenger.isPassenger(),
-                validPassenger.isDriver(),
-                new Date(),
-                false,
-                UUID.randomUUID()
+                validPassenger.isDriver()
         );
         try {
             accountDAO.save(account);
-            Account accountSaved = accountDAO.getAccountById(accountId);
+            Account accountSaved = accountDAO.getAccountById(account.getAccountId());
             assertThat(accountSaved).isNotNull()
-                    .hasFieldOrPropertyWithValue("accountId", accountId)
+                    .hasFieldOrPropertyWithValue("accountId", account.getAccountId())
                     .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
                     .hasFieldOrPropertyWithValue("email", validPassenger.email());
         } catch (SQLException e) {

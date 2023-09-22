@@ -6,10 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -44,7 +41,7 @@ public class AccountDAOImpl implements AccountDAO {
             insertStatement.setString(5, input.getCarPlate());
             insertStatement.setBoolean(6, input.isPassenger());
             insertStatement.setBoolean(7, input.isDriver());
-            insertStatement.setDate(8, new java.sql.Date(input.getDate().getTime()));
+            insertStatement.setDate(8, Date.valueOf(input.getDate()));
             insertStatement.setBoolean(9, false);
             insertStatement.setObject(10, input.getVerificationCode());
             insertStatement.executeUpdate();
@@ -52,7 +49,6 @@ public class AccountDAOImpl implements AccountDAO {
             throw new SQLException("Error while saving account");
         }
     }
-
 
     public Account getAccountById(UUID accountId) throws SQLException {
         ResultSet result;
@@ -70,7 +66,7 @@ public class AccountDAOImpl implements AccountDAO {
     private static Account getAccount(ResultSet result) throws SQLException {
         Account account = null;
         if (result.next()) {
-            account = new Account(
+            account = Account.restore(
                     result.getObject("account_id", UUID.class),
                     result.getString("name"),
                     result.getString("email"),
@@ -78,7 +74,7 @@ public class AccountDAOImpl implements AccountDAO {
                     result.getString("car_plate"),
                     result.getBoolean("is_passenger"),
                     result.getBoolean("is_driver"),
-                    result.getDate("date"),
+                    result.getDate("date").toLocalDate(),
                     result.getBoolean("is_verified"),
                     result.getObject("verification_code", UUID.class)
             );
