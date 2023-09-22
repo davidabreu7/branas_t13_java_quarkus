@@ -23,22 +23,11 @@ public class AccountService {
     }
 
     public UUID signup(AccountInput input) throws Exception {
-                UUID accountId = UUID.randomUUID();
-                SecureRandom random = new SecureRandom();
-                UUID verificationCode = new UUID(random.nextLong(), random.nextLong());
-                Date date = new Date();
 
                 Account existingAccount = accountDAO.getAccountByEmail(input.email());
                 if (existingAccount != null)
                     throw new Exception("Account already exists");
-                if (!input.name().matches("[a-zA-Z]+ [a-zA-Z]+"))
-                    throw new Exception("Invalid name");
-                if (!input.email().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"))
-                    throw new Exception("Invalid email");
-                if (!CpfValidator.validateCpf(input.cpf()))
-                    throw new Exception("Invalid cpf");
-                if (input.isDriver() && (!input.carPlate().matches("[A-Z]{3}[0-9]{4}")))
-                    throw new Exception("Invalid plate");
+
                 Account account = new Account(
                         accountId,
                         input.name(),
