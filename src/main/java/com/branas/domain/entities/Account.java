@@ -42,7 +42,8 @@ public class Account {
         this.isDriver = isDriver;
     }
 
-    public static Account create(String name, String email, String cpf, String carPlate, boolean isPassenger, boolean isDriver) {
+    public static Account create(String name, String email, String cpf,
+                                 String carPlate, boolean isPassenger, boolean isDriver) {
         validateAccount(name, email, cpf, carPlate, isDriver);
         Account account = new Account(name, email, cpf, carPlate, isPassenger, isDriver);
         account.accountId = UUID.randomUUID();
@@ -52,7 +53,9 @@ public class Account {
         return account;
     }
 
-    public static Account restore(UUID accountId, String name, String email, String cpf, String carPlate, boolean isPassenger, boolean isDriver, LocalDate date, boolean isVerified, UUID verificationCode) {
+    public static Account restore(UUID accountId, String name, String email, String cpf,
+                                  String carPlate, boolean isPassenger, boolean isDriver,
+                                  LocalDate date, boolean isVerified, UUID verificationCode) {
         validateAccount(name, email, cpf, carPlate, isDriver);
         Account account = new Account(name, email, cpf, carPlate, isPassenger, isDriver);
         account.accountId = accountId;

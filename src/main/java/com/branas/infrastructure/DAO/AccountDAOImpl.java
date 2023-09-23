@@ -2,6 +2,7 @@ package com.branas.infrastructure.DAO;
 
 import com.branas.domain.entities.Account;
 import com.branas.domain.ports.AccountDAO;
+import com.branas.infrastructure.exceptions.DataBaseException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -15,11 +16,15 @@ public class AccountDAOImpl implements AccountDAO {
     @Inject
     DataSource dataSource;
 
-    public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+    public Connection getConnection()
+    {   try {
+            return dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new DataBaseException("Error while getting connection", e) ;
+        }
     }
 
-    public Account getAccountByEmail(String email) throws SQLException {
+    public Account getAccountByEmail(String email) {
         Account existingAccount = null;
         ResultSet result;
         try (PreparedStatement statement = getConnection().prepareStatement("select * from cccat13.account where email = ?")) {
@@ -27,12 +32,12 @@ public class AccountDAOImpl implements AccountDAO {
             result = statement.executeQuery();
             existingAccount = getAccount(result);
         } catch (SQLException e) {
-            throw new SQLException("Error while getting account by email");
+            throw new DataBaseException("Error while getting account by email", e);
         }
         return existingAccount;
     }
 
-    public void save(Account input) throws SQLException{
+    public void save(Account input){
         try (PreparedStatement insertStatement = getConnection().prepareStatement("insert into cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             insertStatement.setObject(1, input.getAccountId());
             insertStatement.setString(2, input.getName());
@@ -46,11 +51,11 @@ public class AccountDAOImpl implements AccountDAO {
             insertStatement.setObject(10, input.getVerificationCode());
             insertStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new SQLException("Error while saving account");
+            throw new DataBaseException("Error while saving account", e);
         }
     }
 
-    public Account getAccountById(UUID accountId) throws SQLException {
+    public Account getAccountById(UUID accountId){
         ResultSet result;
         Account account = null;
         try (PreparedStatement statement = getConnection().prepareStatement("select * from cccat13.account where account_id = ?")) {
@@ -58,7 +63,7 @@ public class AccountDAOImpl implements AccountDAO {
             result = statement.executeQuery();
             account = getAccount(result);
         } catch (SQLException e) {
-            throw new SQLException("Error while getting account by email");
+            throw new DataBaseException("Error while getting account by id", e);
         }
         return account;
     }

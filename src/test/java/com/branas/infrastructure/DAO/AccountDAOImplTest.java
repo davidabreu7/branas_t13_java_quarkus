@@ -40,21 +40,14 @@ class AccountDAOImplTest {
     @Test
     void getAccountByEmail() {
         Account account;
-        try {
-            account = accountDAO.getAccountByEmail(validPassenger.email());
-            assertThat(account).isNotNull()
-                    .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
-                    .hasFieldOrPropertyWithValue("email", validPassenger.email());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        account = accountDAO.getAccountByEmail(validPassenger.email());
+        assertThat(account).isNotNull()
+                .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
+                .hasFieldOrPropertyWithValue("email", validPassenger.email());
     }
 
     @Test
     void saveAccount() {
-        UUID accountId = UUID.randomUUID();
         Account account = Account.create(
                 validPassenger.name(),
                 VALID_EMAIL,
@@ -63,18 +56,12 @@ class AccountDAOImplTest {
                 validPassenger.isPassenger(),
                 validPassenger.isDriver()
         );
-        try {
-            accountDAO.save(account);
-            Account accountSaved = accountDAO.getAccountByEmail(account.getEmail());
-            assertThat(accountSaved).isNotNull()
-                    .hasFieldOrPropertyWithValue("accountId", account.getAccountId())
-                    .hasFieldOrPropertyWithValue("isPassenger", account.isPassenger())
-                    .hasFieldOrPropertyWithValue("email", account.getEmail());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        accountDAO.save(account);
+        Account accountSaved = accountDAO.getAccountByEmail(account.getEmail());
+        assertThat(accountSaved).isNotNull()
+                .hasFieldOrPropertyWithValue("accountId", account.getAccountId())
+                .hasFieldOrPropertyWithValue("isPassenger", account.isPassenger())
+                .hasFieldOrPropertyWithValue("email", account.getEmail());
     }
 
     @Test
@@ -87,18 +74,11 @@ class AccountDAOImplTest {
                 validPassenger.isPassenger(),
                 validPassenger.isDriver()
         );
-        try {
-            accountDAO.save(account);
-            Account accountSaved = accountDAO.getAccountById(account.getAccountId());
-            assertThat(accountSaved).isNotNull()
-                    .hasFieldOrPropertyWithValue("accountId", account.getAccountId())
-                    .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
-                    .hasFieldOrPropertyWithValue("email", validPassenger.email());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        accountDAO.save(account);
+        Account accountSaved = accountDAO.getAccountById(account.getAccountId());
+        assertThat(accountSaved).isNotNull()
+                .hasFieldOrPropertyWithValue("accountId", account.getAccountId())
+                .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
+                .hasFieldOrPropertyWithValue("email", validPassenger.email());
     }
-
 }

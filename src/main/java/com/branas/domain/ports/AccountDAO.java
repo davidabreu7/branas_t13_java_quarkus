@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface AccountDAO {
 
-    public void save(Account account) throws Exception;
-    public Account getAccountByEmail(String email) throws Exception;
-    public Account getAccountById(UUID accountId) throws Exception;
+    public void save(Account account);
+    public Account getAccountByEmail(String email);
+    public Account getAccountById(UUID accountId);
 }

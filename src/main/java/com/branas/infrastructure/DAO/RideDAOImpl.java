@@ -3,6 +3,7 @@ package com.branas.infrastructure.DAO;
 import com.branas.domain.entities.Coordinate;
 import com.branas.domain.entities.Ride;
 import com.branas.domain.ports.RideDAO;
+import com.branas.infrastructure.exceptions.DataBaseException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -25,7 +26,7 @@ public class RideDAOImpl implements RideDAO {
     }
 
     @Override
-    public void save(Ride ride) throws Exception {
+    public void save(Ride ride) {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement("""
                 insert into cccat13.ride (ride_id, passenger_id, driver_id, status, fare, distance, date, from_lat, from_long, to_lat, to_long)
                 values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""")) {
@@ -41,25 +42,25 @@ public class RideDAOImpl implements RideDAO {
             preparedStatement.setObject(10, ride.getToCoordinate().getLatitude());
             preparedStatement.setObject(11, ride.getToCoordinate().getLongitude());
             preparedStatement.executeUpdate();
-        } catch (Exception e) {
-            throw new SQLException("Error while saving ride");
+        } catch (SQLException e) {
+            throw new DataBaseException("Error while saving ride", e);
         }
 
     }
 
     @Override
-    public Ride getRideById(UUID rideId) throws Exception {
+    public Ride getRideById(UUID rideId) {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement("select * from cccat13.ride where ride_id = ?")) {
             preparedStatement.setObject(1, rideId);
             ResultSet resultSet = preparedStatement.executeQuery();
             return getRide(resultSet);
         } catch (SQLException e) {
-            throw new SQLException("Error while getting ride by id", e);
+            throw new DataBaseException("Error while getting ride by id", e);
         }
     }
 
     @Override
-    public void update(Ride ride) throws Exception {
+    public void update(Ride ride) {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement("""
                 update cccat13.ride set passenger_id = ?, driver_id = ?, status = ?, fare = ?, distance = ?, date = ?, from_lat = ?, from_long = ?, to_lat = ?, to_long = ?
                 where ride_id = ?""")) {
@@ -76,27 +77,27 @@ public class RideDAOImpl implements RideDAO {
             preparedStatement.setObject(11, ride.getRideId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new SQLException("Error while updating ride", e);
+            throw new DataBaseException("Error while updating ride", e);
         }
     }
 
-    public Ride getRideByPassengerId(UUID passengerId) throws Exception {
+    public Ride getRideByPassengerId(UUID passengerId) {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM cccat13.ride WHERE passenger_id = ? ORDER BY date DESC LIMIT 1")) {
             preparedStatement.setObject(1, passengerId);
             ResultSet resultSet = preparedStatement.executeQuery();
             return getRide(resultSet);
         } catch (SQLException e) {
-            throw new SQLException("Error while getting ride by passenger id", e);
+            throw new DataBaseException("Error while getting ride by passenger id", e);
         }
     }
 
-    public Ride getRideByDriverId(UUID driverId) throws Exception {
+    public Ride getRideByDriverId(UUID driverId) {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM cccat13.ride WHERE driver_id = ? ORDER BY date DESC LIMIT 1")) {
             preparedStatement.setObject(1, driverId);
             ResultSet resultSet = preparedStatement.executeQuery();
             return getRide(resultSet);
         } catch (SQLException e) {
-            throw new SQLException("Error while getting ride by driver id", e);
+            throw new DataBaseException("Error while getting ride by driver id", e);
         }
     }
 
@@ -112,12 +113,10 @@ public class RideDAOImpl implements RideDAO {
                     resultSet.getObject("date", LocalDateTime.class),
                     new Coordinate(
                             resultSet.getDouble("from_lat"),
-                            resultSet.getDouble("from_long")
-                    ),
+                            resultSet.getDouble("from_long")),
                     new Coordinate(
                             resultSet.getDouble("to_lat"),
-                            resultSet.getDouble("to_long")
-                    )
+                            resultSet.getDouble("to_long"))
         );
         } else {
             return null;

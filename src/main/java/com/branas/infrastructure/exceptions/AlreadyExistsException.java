@@ -3,7 +3,7 @@ package com.branas.infrastructure.exceptions;
 import lombok.Getter;
 
 @Getter
-public class AlreadyExistsException extends Exception{
+public class AlreadyExistsException extends RuntimeException{
 
     public AlreadyExistsException() {
         super();

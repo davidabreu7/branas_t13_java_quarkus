@@ -21,37 +21,36 @@ public class RideService {
     @Inject
     AccountDAO accountDAO;
 
-    public Ride requestRide(String accountId, RidePath ridePath) throws Exception {
+    public Ride requestRide(String accountId, RidePath ridePath) {
         Account account = null;
         Ride ride;
-
-            account = accountDAO.getAccountById(UUID.fromString(accountId));
-            if (account == null) {
-                throw new ResourceNotFoundException("Account not found");
-            }
-            if (account.isDriver() || !account.isPassenger()) {
-                throw new ValidationErrorException("Driver cannot request a ride");
-            }
-           Ride latestRide = rideDAO.getRideByPassengerId(account.getAccountId());
-            if (latestRide != null && !latestRide.getStatus().equals("COMPLETED")) {
-                throw new ValidationErrorException("Passenger already has a requested ride");
-            }
-                ride = new Ride(
-                        UUID.randomUUID(),
-                        account.getAccountId(),
-                        null,
-                        "REQUESTED",
-                        null,
-                        null,
-                        LocalDateTime.now(),
-                        ridePath.fromCoordinate(),
-                        ridePath.toCoordinate()
-                );
-                rideDAO.save(ride);
-        return ride;
+        account = accountDAO.getAccountById(UUID.fromString(accountId));
+        if (account == null) {
+            throw new ResourceNotFoundException("Account not found");
+        }
+        if (account.isDriver() || !account.isPassenger()) {
+            throw new ValidationErrorException("Driver cannot request a ride");
+        }
+       Ride latestRide = rideDAO.getRideByPassengerId(account.getAccountId());
+        if (latestRide != null && !latestRide.getStatus().equals("COMPLETED")) {
+            throw new ValidationErrorException("Passenger already has a requested ride");
+        }
+            ride = new Ride(
+                    UUID.randomUUID(),
+                    account.getAccountId(),
+                    null,
+                    "REQUESTED",
+                    null,
+                    null,
+                    LocalDateTime.now(),
+                    ridePath.fromCoordinate(),
+                    ridePath.toCoordinate()
+            );
+            rideDAO.save(ride);
+    return ride;
     }
 
-        public Ride acceptRide(String driverId, String rideId) throws Exception {
+    public Ride acceptRide(String driverId, String rideId) {
         Account driver = accountDAO.getAccountById(UUID.fromString(driverId));
         Ride ride = rideDAO.getRideById(UUID.fromString(rideId));
         if (driver == null) {
@@ -72,10 +71,10 @@ public class RideService {
         ride.setDriverId(driver.getAccountId());
         ride.setStatus("ACCEPTED");
         rideDAO.update(ride);
-        return ride;
-    }
+    return ride;
+}
 
     public Ride getRideById(String rideId) {
-        return null;
+        return rideDAO.getRideById(UUID.fromString(rideId));
     }
 }
