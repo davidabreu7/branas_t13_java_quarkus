@@ -103,13 +103,13 @@ public class RideDAOImpl implements RideDAO {
 
     private Ride getRide(ResultSet resultSet) throws SQLException {
         if (resultSet.next()) {
-            return new Ride(
+            return Ride.restore(
                     resultSet.getObject("ride_id", UUID.class),
                     resultSet.getObject("passenger_id", UUID.class),
                     resultSet.getObject("driver_id", UUID.class),
                     resultSet.getString("status"),
-                    resultSet.getBigDecimal("fare"),
                     resultSet.getDouble("distance"),
+                    resultSet.getBigDecimal("fare"),
                     resultSet.getObject("date", LocalDateTime.class),
                     new Coordinate(
                             resultSet.getDouble("from_lat"),

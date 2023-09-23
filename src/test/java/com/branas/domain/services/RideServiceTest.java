@@ -12,7 +12,6 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
 import java.util.UUID;
 
 import static com.branas.utils.RideTestValues.*;
@@ -20,7 +19,8 @@ import static com.branas.utils.TestValues.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @QuarkusTest
 class RideServiceTest {
@@ -46,14 +46,8 @@ class RideServiceTest {
                 true,
                 false
         );
-        Ride ride = new Ride(
-                        null,
+        Ride ride = Ride.create(
                         PASSENGER_ID,
-                        DRIVER_ID,
-                        STATUS,
-                        PRICE,
-                        DISTANCE,
-                        TIMESTAMP,
                         FROM_COORDINATE,
                         TO_COORDINATE
                 );
@@ -92,9 +86,6 @@ class RideServiceTest {
 
     @Test
     void shouldNotCreateRideWhenAccountIsNotPassenger() throws Exception {
-
-        Ride ride = new Ride();
-        UUID accountId = UUID.randomUUID();
         Account account = Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
@@ -113,14 +104,8 @@ class RideServiceTest {
 
     @Test
     void ShouldNotCreateRideWhenExistsRideWithStatusDifferentFromCompleted() throws Exception {
-        Ride ride = new Ride(
-                UUID.randomUUID(),
+        Ride ride = Ride.create(
                 PASSENGER_ID,
-                DRIVER_ID,
-                "REQUESTED",
-                PRICE,
-                DISTANCE,
-                TIMESTAMP,
                 FROM_COORDINATE,
                 TO_COORDINATE
         );
@@ -136,14 +121,8 @@ class RideServiceTest {
 
     @Test
     void shouldAccepRide() throws Exception {
-        Ride ride = new Ride(
-                UUID.randomUUID(),
+        Ride ride = Ride.create(
                 PASSENGER_ID,
-                DRIVER_ID,
-                "REQUESTED",
-                PRICE,
-                DISTANCE,
-                TIMESTAMP,
                 FROM_COORDINATE,
                 TO_COORDINATE
         );
@@ -193,25 +172,13 @@ when(accountDAO.getAccountById(any(UUID.class)))
     @Test
     void shouldNotAcceptRideWhenDriverIsNotAvailable() throws Exception {
         UUID driverId = UUID.randomUUID();
-        Ride ride = new Ride(
-                UUID.randomUUID(),
+        Ride ride = Ride.create(
                 PASSENGER_ID,
-                driverId,
-                "REQUESTED",
-                PRICE,
-                DISTANCE,
-                TIMESTAMP,
                 FROM_COORDINATE,
                 TO_COORDINATE
         );
-        Ride newRide = new Ride(
-                UUID.randomUUID(),
+        Ride newRide = Ride.create(
                 PASSENGER_ID,
-                null,
-                "REQUESTED",
-                PRICE,
-                DISTANCE,
-                TIMESTAMP,
                 FROM_COORDINATE,
                 TO_COORDINATE
         );
