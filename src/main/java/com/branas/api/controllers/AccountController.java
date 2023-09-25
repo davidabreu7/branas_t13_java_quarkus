@@ -21,14 +21,14 @@ public class AccountController {
     @Path("/signup")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public RestResponse<UUID> signup(@RequestBody AccountInput account) throws Exception {
+    public RestResponse<UUID> signup(@RequestBody AccountInput account) {
         return RestResponse.ok(accountService.signup(account));
     }
 
     @GET
     @Path("/account/{accountId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public RestResponse<Account> getAccount(@PathParam("accountId") UUID accountId) throws Exception {
+    public RestResponse<Account> getAccount(@PathParam("accountId") UUID accountId) {
         return RestResponse.ok(accountService.getAccount(accountId));
     }
 }
