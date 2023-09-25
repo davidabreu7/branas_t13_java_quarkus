@@ -61,7 +61,7 @@ class RequestRideTest {
     @Test
     void shouldRequestRide() {
         when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(account);
+                .thenReturn(Optional.ofNullable(account));
         Ride ride = requestRide.excecute(account.getAccountId().toString(),
                 new RidePath(FROM_COORDINATE, TO_COORDINATE));
         assertThat(ride)
@@ -77,7 +77,7 @@ class RequestRideTest {
     @Test
     void shouldNoteCreateRideWhenAccountNotFound() {
         when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(null);
+                .thenReturn(Optional.empty());
         String existingAccount = account.getAccountId().toString();
         RidePath path =  new RidePath(FROM_COORDINATE, TO_COORDINATE);
         assertThatThrownBy(() -> requestRide.excecute(existingAccount, path))
@@ -96,7 +96,7 @@ class RequestRideTest {
                 false
         );
         when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(account);
+                .thenReturn(Optional.of(account));
         String existingAccount = account.getAccountId().toString();
         RidePath path =  new RidePath(FROM_COORDINATE, TO_COORDINATE);
         assertThatThrownBy(() -> requestRide.excecute(existingAccount, path))
@@ -114,7 +114,7 @@ class RequestRideTest {
         when(rideDAO.getRideByPassengerId(any(UUID.class)))
                 .thenReturn(ride);
         when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(account);
+                .thenReturn(Optional.of(account));
         String existingAccount = account.getAccountId().toString();
         RidePath path =  new RidePath(FROM_COORDINATE, TO_COORDINATE);
         assertThatThrownBy(() -> requestRide.excecute(existingAccount, path))

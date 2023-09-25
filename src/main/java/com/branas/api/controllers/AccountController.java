@@ -2,7 +2,8 @@ package com.branas.api.controllers;
 
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
-import com.branas.domain.usecases.AccountService;
+import com.branas.domain.usecases.AccountSignup;
+import com.branas.domain.usecases.GetAccount;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -15,20 +16,22 @@ import java.util.UUID;
 public class AccountController {
 
     @Inject
-    AccountService accountService;
+    AccountSignup accountSignup;
+    @Inject
+    GetAccount getAccount;
 
     @POST
     @Path("/signup")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public RestResponse<UUID> signup(@RequestBody AccountInput account) {
-        return RestResponse.ok(accountService.signup(account));
+        return RestResponse.ok(accountSignup.execute(account));
     }
 
     @GET
     @Path("/account/{accountId}")
     @Produces(MediaType.APPLICATION_JSON)
     public RestResponse<Account> getAccount(@PathParam("accountId") UUID accountId) {
-        return RestResponse.ok(accountService.getAccount(accountId));
+        return RestResponse.ok(getAccount.execute(accountId));
     }
 }

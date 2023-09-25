@@ -76,7 +76,7 @@ class AcceptRideTest {
         when(rideDAO.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
         when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(driver);
+                .thenReturn(Optional.of(driver));
         Ride acceptedRide = acceptRide.exceute(ride.getRideId().toString(), driver.getAccountId().toString());
         assertThat(acceptedRide)
                 .isNotNull()
@@ -99,7 +99,7 @@ class AcceptRideTest {
         when(rideDAO.getRideById(any(UUID.class)))
                 .thenReturn(Optional.empty());
         when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(driver);
+                .thenReturn(Optional.of(driver));
         String driverId = UUID.randomUUID().toString();
         String rideId = UUID.randomUUID().toString();
         assertThatThrownBy(() -> acceptRide.exceute(driverId, rideId))
@@ -136,7 +136,7 @@ class AcceptRideTest {
         when(rideDAO.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
         when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(driver);
+                .thenReturn(Optional.of(driver));
         when(rideDAO.getRideByDriverId(any(UUID.class)))
                 .thenReturn(ride);
         String driverId = newRide.getRideId().toString();

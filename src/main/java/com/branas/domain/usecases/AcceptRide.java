@@ -20,7 +20,8 @@ public class AcceptRide {
     AccountDAO accountDAO;
 
     public Ride exceute(String driverId, String rideId) {
-        Account driver = accountDAO.getAccountById(UUID.fromString(driverId));
+        Account driver = accountDAO.getAccountById(UUID.fromString(driverId))
+                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
         Ride ride = rideDAO.getRideById(UUID.fromString(rideId))
                 .orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
         if (driver == null) {

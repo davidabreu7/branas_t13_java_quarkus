@@ -3,6 +3,7 @@ package com.branas.infrastructure.DAO;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
 import com.branas.api.ports.AccountDAO;
+import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +72,8 @@ class AccountDAOImplTest {
                 validPassenger.isDriver()
         );
         accountDAO.save(account);
-        Account accountSaved = accountDAO.getAccountById(account.getAccountId());
+        Account accountSaved = accountDAO.getAccountById(account.getAccountId())
+                .orElseThrow( () -> new ResourceNotFoundException("Account not found"));
         assertThat(accountSaved).isNotNull()
                 .hasFieldOrPropertyWithValue("accountId", account.getAccountId())
                 .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())

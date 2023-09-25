@@ -5,7 +5,6 @@ import com.branas.domain.entities.Ride;
 import com.branas.domain.usecases.AcceptRide;
 import com.branas.domain.usecases.GetRide;
 import com.branas.domain.usecases.RequestRide;
-import com.branas.domain.usecases.RideService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -29,13 +28,13 @@ public class RideController {
     public RestResponse<Ride> requestRide(
             @PathParam("accountId") String accountId,
             @RequestBody RidePath ridePath
-            ) throws Exception {
+            ) {
         return RestResponse.ok(requestRide.excecute(accountId, ridePath));
     }
 
     @PUT
     @Path("/rides/accept/{rideId}/{driverId}")
-    public RestResponse<Ride> acceptRide(@PathParam("rideId") String rideId, @PathParam("driverId") String driverId) throws Exception {
+    public RestResponse<Ride> acceptRide(@PathParam("rideId") String rideId, @PathParam("driverId") String driverId) {
         return RestResponse.ok(acceptRide.exceute(rideId, driverId));
     }
 

@@ -3,6 +3,7 @@ package com.branas.domain.usecases;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
 import com.branas.api.ports.AccountDAO;
+import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import com.branas.utils.CpfValidator;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -10,6 +11,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.branas.utils.TestValues.*;
@@ -17,13 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @QuarkusTest
-class AccountServiceTest {
+class AccountSignupTest {
 
     static String VALID_EMAIL;
     @InjectMock
     AccountDAO accountDAO;
     @Inject
-    AccountService accountService;
+    AccountSignup accountSignup;
 
     @BeforeEach
     void setup() {
@@ -51,11 +53,12 @@ class AccountServiceTest {
 
        when(accountDAO.getAccountByEmail(validPassenger.email()))
                .thenReturn(null);
-        UUID accountId = accountService.signup(validPassenger);
+        UUID accountId = accountSignup.execute(validPassenger);
         account.setAccountId(accountId);
         when(accountDAO.getAccountById(accountId))
-                .thenReturn(account);
-        Account accountSaved = accountService.getAccount(accountId);
+                .thenReturn(Optional.of(account));
+        Account accountSaved = accountDAO.getAccountById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
         assertThat(accountSaved).isNotNull()
                 .hasFieldOrPropertyWithValue("accountId", accountId)
                 .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
@@ -73,7 +76,7 @@ class AccountServiceTest {
         when(accountDAO.getAccountByEmail(input.email()))
                 .thenReturn(null);
         try {
-           accountService.signup(input);
+           accountSignup.execute(input);
         } catch (Exception e) {
             assertThat(CpfValidator.validateCpf(input.cpf())).isFalse();
             assertThat(e).isInstanceOf(Exception.class)
@@ -91,7 +94,7 @@ class AccountServiceTest {
         when(accountDAO.getAccountByEmail(input.email()))
                 .thenReturn(null);
         try {
-            accountService.signup(input);
+            accountSignup.execute(input);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(Exception.class)
                     .hasMessageContaining("Invalid name");
@@ -108,7 +111,7 @@ class AccountServiceTest {
         when(accountDAO.getAccountByEmail(input.email()))
                 .thenReturn(null);
         try {
-            accountService.signup(input);
+            accountSignup.execute(input);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(Exception.class)
                     .hasMessageContaining("Invalid email");
@@ -133,7 +136,7 @@ class AccountServiceTest {
         when(accountDAO.getAccountByEmail(input.email()))
                 .thenReturn(account);
         try {
-            accountService.signup(input);
+            accountSignup.execute(input);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(Exception.class)
                     .hasMessageContaining("Account already exists");
@@ -158,11 +161,11 @@ class AccountServiceTest {
         );
          when(accountDAO.getAccountByEmail(validDriver.email()))
                  .thenReturn(null);
-        UUID accountIdSaved = accountService.signup(validDriver);
+        UUID accountIdSaved = accountSignup.execute(validDriver);
         account.setAccountId(accountIdSaved);
         when(accountDAO.getAccountById(accountIdSaved))
-                .thenReturn(account);
-        Account accountSaved = accountService.getAccount(accountIdSaved);
+                .thenReturn(Optional.of(account));
+        Account accountSaved = accountDAO.getAccountById(accountIdSaved).orElseThrow( () -> new ResourceNotFoundException("Account not found"));
         assertThat(accountSaved)
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("accountId", accountIdSaved)
@@ -172,7 +175,6 @@ class AccountServiceTest {
     }
     @Test
     void ShouldNotCreateDriverWithInvalidPlate() {
-        UUID accountId = UUID.randomUUID();
         AccountInput input = AccountInput.builder()
                 .isDriver(true)
                 .name(VALID_NAME.value())
@@ -184,7 +186,7 @@ class AccountServiceTest {
                 .thenReturn(null);
 
        try {
-           accountService.signup(input);
+           accountSignup.execute(input);
          } catch (Exception e) {
            assertThat(e).isInstanceOf(Exception.class)
                    .hasMessageContaining("Invalid plate");

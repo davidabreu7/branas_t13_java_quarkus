@@ -21,7 +21,8 @@ public class RequestRide {
     AccountDAO accountDAO;
 
     public Ride excecute(String accountId, RidePath ridePath) {
-        Account account = accountDAO.getAccountById(UUID.fromString(accountId));
+        Account account = accountDAO.getAccountById(UUID.fromString(accountId))
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
         validateAccount(account);
         Ride ride = Ride.create(
                 account.getAccountId(),

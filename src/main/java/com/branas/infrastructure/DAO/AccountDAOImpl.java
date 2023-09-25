@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -55,7 +56,7 @@ public class AccountDAOImpl implements AccountDAO {
         }
     }
 
-    public Account getAccountById(UUID accountId){
+    public Optional<Account> getAccountById(UUID accountId){
         ResultSet result;
         Account account = null;
         try (PreparedStatement statement = getConnection().prepareStatement("select * from cccat13.account where account_id = ?")) {
@@ -65,7 +66,7 @@ public class AccountDAOImpl implements AccountDAO {
         } catch (SQLException e) {
             throw new DataBaseException("Error while getting account by id", e);
         }
-        return account;
+        return Optional.ofNullable(account);
     }
 
     private static Account getAccount(ResultSet result) throws SQLException {

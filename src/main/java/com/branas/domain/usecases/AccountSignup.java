@@ -1,8 +1,8 @@
 package com.branas.domain.usecases;
 
+import com.branas.api.ports.AccountDAO;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
-import com.branas.api.ports.AccountDAO;
 import com.branas.infrastructure.exceptions.AlreadyExistsException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -10,7 +10,7 @@ import jakarta.inject.Inject;
 import java.util.UUID;
 
 @ApplicationScoped
-public class AccountService {
+public class AccountSignup {
 
     @Inject
     AccountDAO accountDAO;
@@ -19,7 +19,7 @@ public class AccountService {
         System.out.println(email + " " + subject + " " + message);
     }
 
-    public UUID signup(AccountInput input) {
+    public UUID execute(AccountInput input) {
                 Account existingAccount = accountDAO.getAccountByEmail(input.email());
                 if (existingAccount != null)
                     throw new AlreadyExistsException("Account already exists");
@@ -34,9 +34,5 @@ public class AccountService {
                     accountDAO.save(account);
                     sendEmail(account.getEmail(), "Verification", "Please verify your code at first login " + account.getVerificationCode());
                     return account.getAccountId();
-    }
-
-    public Account getAccount(UUID accountId)  {
-        return accountDAO.getAccountById(accountId);
     }
 }
