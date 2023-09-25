@@ -2,7 +2,7 @@ package com.branas.api.controllers;
 
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
-import com.branas.domain.services.AccountService;
+import com.branas.domain.usecases.AccountService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

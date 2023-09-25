@@ -1,13 +1,12 @@
-package com.branas.domain.services;
+package com.branas.domain.usecases;
 
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
-import com.branas.domain.ports.AccountDAO;
+import com.branas.api.ports.AccountDAO;
 import com.branas.infrastructure.exceptions.AlreadyExistsException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.sql.*;
 import java.util.UUID;
 
 @ApplicationScoped

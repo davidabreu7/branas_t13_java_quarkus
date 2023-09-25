@@ -1,7 +1,7 @@
 package com.branas.infrastructure.DAO;
 
 import com.branas.domain.entities.Account;
-import com.branas.domain.ports.AccountDAO;
+import com.branas.api.ports.AccountDAO;
 import com.branas.infrastructure.exceptions.DataBaseException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

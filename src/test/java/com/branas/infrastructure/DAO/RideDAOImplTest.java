@@ -9,8 +9,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @QuarkusTest
@@ -27,11 +25,7 @@ class RideDAOImplTest {
 
     @BeforeEach
     void setUp() {
-        validRide = Ride.create(
-                PASSENGER_ID,
-                FROM_COORDINATE,
-                TO_COORDINATE
-        );
+        validRide = Ride.create(PASSENGER_ID, FROM_COORDINATE,TO_COORDINATE);
     }
 
     @AfterEach
@@ -43,7 +37,9 @@ class RideDAOImplTest {
         Ride ride = validRide;
         UUID rideId = ride.getRideId();
         rideDAO.save(ride);
-        Assertions.assertThat(rideDAO.getRideById(rideId))
+        Ride savedRide = rideDAO.getRideById(rideId)
+                .orElseThrow(() -> new RuntimeException("Ride not found"));
+        Assertions.assertThat(savedRide)
                 .isNotNull()
                 .isInstanceOf(Ride.class)
                 .hasFieldOrPropertyWithValue("rideId", rideId)
@@ -57,7 +53,9 @@ class RideDAOImplTest {
         Ride updatedRide = validRide;
         ride.accept(DRIVER_ID);
         rideDAO.update(updatedRide);
-        Assertions.assertThat(rideDAO.getRideById(ride.getRideId()))
+        Ride savedRide = rideDAO.getRideById(ride.getRideId())
+                .orElseThrow(() -> new RuntimeException("Ride not found"));
+        Assertions.assertThat(savedRide)
                 .isNotNull()
                 .isInstanceOf(Ride.class)
                 .hasFieldOrPropertyWithValue("rideId", ride.getRideId())

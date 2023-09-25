@@ -1,10 +1,10 @@
-package com.branas.domain.services;
+package com.branas.domain.usecases;
 
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.ports.AccountDAO;
-import com.branas.domain.ports.RideDAO;
+import com.branas.api.ports.AccountDAO;
+import com.branas.api.ports.RideDAO;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.branas.utils.RideTestValues.*;
@@ -35,8 +36,7 @@ class RideServiceTest {
     Account account;
 
     @BeforeEach
-    void setUp() throws Exception {
-        UUID accountId = UUID.randomUUID();
+    void setUp() {
         VALID_EMAIL = "john.doe%d@gmail.com".formatted(System.currentTimeMillis());
         account = Account.create(
                 VALID_NAME.value(),
@@ -55,11 +55,11 @@ class RideServiceTest {
                 .when(rideDAO)
                 .save(any(Ride.class));
         when(rideDAO.getRideById(any(UUID.class)))
-                .thenReturn(ride);
+                .thenReturn(Optional.of(ride));
     }
 
     @Test
-    void shouldRequestRide() throws Exception {;
+    void shouldRequestRide() {
         when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(account);
         Ride ride = rideService.requestRide(account.getAccountId().toString(),
@@ -75,7 +75,7 @@ class RideServiceTest {
     }
 
     @Test
-    void shouldNoteCreateRideWhenAccountNotFound() throws Exception {
+    void shouldNoteCreateRideWhenAccountNotFound() {
         when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(null);
         assertThatThrownBy(() -> rideService.requestRide(account.getAccountId().toString(),
@@ -85,7 +85,7 @@ class RideServiceTest {
     }
 
     @Test
-    void shouldNotCreateRideWhenAccountIsNotPassenger() throws Exception {
+    void shouldNotCreateRideWhenAccountIsNotPassenger() {
         Account account = Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
@@ -103,7 +103,7 @@ class RideServiceTest {
     }
 
     @Test
-    void ShouldNotCreateRideWhenExistsRideWithStatusDifferentFromCompleted() throws Exception {
+    void ShouldNotCreateRideWhenExistsRideWithStatusDifferentFromCompleted() {
         Ride ride = Ride.create(
                 PASSENGER_ID,
                 FROM_COORDINATE,
@@ -120,13 +120,12 @@ class RideServiceTest {
     }
 
     @Test
-    void shouldAccepRide() throws Exception {
+    void shouldAccepRide() {
         Ride ride = Ride.create(
                 PASSENGER_ID,
                 FROM_COORDINATE,
                 TO_COORDINATE
         );
-        UUID accountId = UUID.randomUUID();
         VALID_EMAIL = "john.doe%d@gmail.com".formatted(System.currentTimeMillis());
         Account driver =  Account.create(
                 VALID_NAME.value(),
@@ -137,7 +136,7 @@ class RideServiceTest {
                 true
         );
         when(rideDAO.getRideById(any(UUID.class)))
-                .thenReturn(ride);
+                .thenReturn(Optional.of(ride));
 when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(driver);
         Ride acceptedRide = rideService.acceptRide(ride.getRideId().toString(), driver.getAccountId().toString());
@@ -149,8 +148,7 @@ when(accountDAO.getAccountById(any(UUID.class)))
     }
 
     @Test
-    void shouldNotAcceptRideWhenRideNotFound() throws Exception {
-        UUID accountId = UUID.randomUUID();
+    void shouldNotAcceptRideWhenRideNotFound() {
         Account driver = Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
@@ -161,7 +159,7 @@ when(accountDAO.getAccountById(any(UUID.class)))
         );
 
         when(rideDAO.getRideById(any(UUID.class)))
-                .thenReturn(null);
+                .thenReturn(Optional.empty());
         when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(driver);
         assertThatThrownBy(() -> rideService.acceptRide(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
@@ -170,7 +168,7 @@ when(accountDAO.getAccountById(any(UUID.class)))
     }
 
     @Test
-    void shouldNotAcceptRideWhenDriverIsNotAvailable() throws Exception {
+    void shouldNotAcceptRideWhenDriverIsNotAvailable() {
         UUID driverId = UUID.randomUUID();
         Ride ride = Ride.create(
                 PASSENGER_ID,
@@ -185,7 +183,7 @@ when(accountDAO.getAccountById(any(UUID.class)))
         when(rideDAO.getRideByPassengerId(any(UUID.class)))
                 .thenReturn(newRide);
         when(rideDAO.getRideById(any(UUID.class)))
-                .thenReturn(ride);
+                .thenReturn(Optional.of(ride));
         VALID_EMAIL = "john.doe%d@gmail.com".formatted(System.currentTimeMillis());
         Account driver = Account.create(
                 VALID_NAME.value(),
@@ -197,7 +195,7 @@ when(accountDAO.getAccountById(any(UUID.class)))
         );
         driver.setAccountId(driverId);
         when(rideDAO.getRideById(any(UUID.class)))
-                .thenReturn(ride);
+                .thenReturn(Optional.of(ride));
         when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(driver);
         when(rideDAO.getRideByDriverId(any(UUID.class)))

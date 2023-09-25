@@ -2,15 +2,11 @@ package com.branas.infrastructure.DAO;
 
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
-import com.branas.domain.ports.AccountDAO;
+import com.branas.api.ports.AccountDAO;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.UUID;
 
 import static com.branas.domain.DTO.AccountInput.builder;
 import static com.branas.utils.TestValues.*;

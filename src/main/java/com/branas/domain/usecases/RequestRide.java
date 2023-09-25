@@ -1,10 +1,10 @@
-package com.branas.domain.services;
+package com.branas.domain.usecases;
 
+import com.branas.api.ports.AccountDAO;
+import com.branas.api.ports.RideDAO;
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.ports.AccountDAO;
-import com.branas.domain.ports.RideDAO;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import com.branas.infrastructure.exceptions.ValidationErrorException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -13,14 +13,14 @@ import jakarta.inject.Inject;
 import java.util.UUID;
 
 @ApplicationScoped
-public class RideService {
+public class RequestRide {
 
     @Inject
     RideDAO rideDAO;
     @Inject
     AccountDAO accountDAO;
 
-    public Ride requestRide(String accountId, RidePath ridePath) {
+    public Ride excecute(String accountId, RidePath ridePath) {
         Account account = accountDAO.getAccountById(UUID.fromString(accountId));
         validateAccount(account);
         Ride ride = Ride.create(
@@ -29,8 +29,9 @@ public class RideService {
                 ridePath.toCoordinate()
         );
         rideDAO.save(ride);
-    return ride;
+        return ride;
     }
+
 
     private void validateAccount(Account account) {
         if (account == null) {
@@ -43,30 +44,5 @@ public class RideService {
         if (latestRide != null && !latestRide.getStatus().equals("COMPLETED")) {
             throw new ValidationErrorException("Passenger already has a requested ride");
         }
-    }
-
-    public Ride acceptRide(String driverId, String rideId) {
-        Account driver = accountDAO.getAccountById(UUID.fromString(driverId));
-        Ride ride = rideDAO.getRideById(UUID.fromString(rideId));
-        if (driver == null) {
-            throw new ResourceNotFoundException("Driver not found");
-        }
-        if (!driver.isDriver()) {
-            throw new ValidationErrorException("Account is not a driver");
-        }
-        if (ride == null) {
-            throw new ResourceNotFoundException("Ride not found");
-        }
-
-        if(rideDAO.getRideByDriverId(driver.getAccountId()) != null) {
-            throw new ValidationErrorException("Driver already has a ride");
-        }
-        ride.accept(driver.getAccountId());
-        rideDAO.update(ride);
-    return ride;
-}
-
-    public Ride getRideById(String rideId) {
-        return rideDAO.getRideById(UUID.fromString(rideId));
     }
 }

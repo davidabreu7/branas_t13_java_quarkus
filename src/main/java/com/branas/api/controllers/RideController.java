@@ -2,7 +2,10 @@ package com.branas.api.controllers;
 
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.services.RideService;
+import com.branas.domain.usecases.AcceptRide;
+import com.branas.domain.usecases.GetRide;
+import com.branas.domain.usecases.RequestRide;
+import com.branas.domain.usecases.RideService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -15,7 +18,11 @@ import org.jboss.resteasy.reactive.RestResponse;
 public class RideController {
 
     @Inject
-    RideService rideService;
+    RequestRide requestRide;
+    @Inject
+    AcceptRide acceptRide;
+    @Inject
+    GetRide getRide;
 
     @POST
     @Path("/rides/request/{accountId}")
@@ -23,18 +30,18 @@ public class RideController {
             @PathParam("accountId") String accountId,
             @RequestBody RidePath ridePath
             ) throws Exception {
-        return RestResponse.ok(rideService.requestRide(accountId, ridePath));
+        return RestResponse.ok(requestRide.excecute(accountId, ridePath));
     }
 
     @PUT
     @Path("/rides/accept/{rideId}/{driverId}")
     public RestResponse<Ride> acceptRide(@PathParam("rideId") String rideId, @PathParam("driverId") String driverId) throws Exception {
-        return RestResponse.ok(rideService.acceptRide(rideId, driverId));
+        return RestResponse.ok(acceptRide.exceute(rideId, driverId));
     }
 
     @GET
     @Path("/rides/{rideId}")
     public RestResponse<Ride> getRideById(@PathParam("rideId") String rideId) {
-        return RestResponse.ok(rideService.getRideById(rideId));
+        return RestResponse.ok(getRide.execute(rideId));
     }
 }

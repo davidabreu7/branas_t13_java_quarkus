@@ -2,7 +2,7 @@ package com.branas.infrastructure.DAO;
 
 import com.branas.domain.entities.Coordinate;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.ports.RideDAO;
+import com.branas.api.ports.RideDAO;
 import com.branas.infrastructure.exceptions.DataBaseException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -49,11 +50,11 @@ public class RideDAOImpl implements RideDAO {
     }
 
     @Override
-    public Ride getRideById(UUID rideId) {
+    public Optional<Ride> getRideById(UUID rideId) {
         try (PreparedStatement preparedStatement = getConnection().prepareStatement("select * from cccat13.ride where ride_id = ?")) {
             preparedStatement.setObject(1, rideId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            return getRide(resultSet);
+            return Optional.ofNullable(getRide(resultSet));
         } catch (SQLException e) {
             throw new DataBaseException("Error while getting ride by id", e);
         }
