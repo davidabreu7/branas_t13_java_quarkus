@@ -2,9 +2,9 @@ package com.branas.api.controllers;
 
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.usecases.AcceptRide;
-import com.branas.domain.usecases.GetRide;
-import com.branas.domain.usecases.RequestRide;
+import com.branas.domain.usecases.Ride.AcceptRide;
+import com.branas.domain.usecases.Ride.GetRide;
+import com.branas.domain.usecases.Ride.RequestRide;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -35,7 +35,7 @@ public class RideController {
     @PUT
     @Path("/rides/accept/{rideId}/{driverId}")
     public RestResponse<Ride> acceptRide(@PathParam("rideId") String rideId, @PathParam("driverId") String driverId) {
-        return RestResponse.ok(acceptRide.exceute(rideId, driverId));
+        return RestResponse.ok(acceptRide.execute(rideId, driverId));
     }
 
     @GET

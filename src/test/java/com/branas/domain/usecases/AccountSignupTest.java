@@ -1,10 +1,11 @@
 package com.branas.domain.usecases;
 
+import com.branas.api.ports.AccountDAO;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
-import com.branas.api.ports.AccountDAO;
+import com.branas.domain.usecases.Account.AccountSignup;
+import com.branas.domain.valueObjects.Cpf;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
-import com.branas.utils.CpfValidator;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -45,7 +46,7 @@ class AccountSignupTest {
         Account account =  Account.create(
                 validPassenger.name(),
                 validPassenger.email(),
-                validPassenger.cpf(),
+                new Cpf(validPassenger.cpf()),
                 validPassenger.carPlate(),
                 validPassenger.isPassenger(),
                 validPassenger.isDriver()
@@ -78,9 +79,8 @@ class AccountSignupTest {
         try {
            accountSignup.execute(input);
         } catch (Exception e) {
-            assertThat(CpfValidator.validateCpf(input.cpf())).isFalse();
             assertThat(e).isInstanceOf(Exception.class)
-                    .hasMessageContaining("Invalid cpf");
+                    .hasMessageContaining("Invalid CPF");
         }
     }
     @Test
@@ -128,7 +128,7 @@ class AccountSignupTest {
         Account account = Account.create(
                 input.name(),
                 input.email(),
-                input.cpf(),
+                new Cpf(input.cpf()),
                 input.carPlate(),
                 input.isPassenger(),
                 input.isDriver()
@@ -154,7 +154,7 @@ class AccountSignupTest {
        Account account =  Account.create(
                 validDriver.name(),
                 validDriver.email(),
-                validDriver.cpf(),
+                new Cpf(validDriver.cpf()),
                 validDriver.carPlate(),
                 validDriver.isPassenger(),
                 validDriver.isDriver()

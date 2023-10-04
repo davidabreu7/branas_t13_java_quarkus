@@ -1,8 +1,9 @@
-package com.branas.domain.usecases;
+package com.branas.domain.usecases.Account;
 
 import com.branas.api.ports.AccountDAO;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
+import com.branas.domain.valueObjects.Cpf;
 import com.branas.infrastructure.exceptions.AlreadyExistsException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,7 +27,7 @@ public class AccountSignup {
                 Account account = Account.create(
                         input.name(),
                         input.email(),
-                        input.cpf(),
+                        new Cpf(input.cpf()),
                         input.carPlate(),
                         input.isPassenger(),
                         input.isDriver()

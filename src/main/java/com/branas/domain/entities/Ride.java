@@ -1,5 +1,6 @@
 package com.branas.domain.entities;
 
+import com.branas.domain.valueObjects.Coordinate;
 import com.branas.infrastructure.exceptions.ValidationErrorException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

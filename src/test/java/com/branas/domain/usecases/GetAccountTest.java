@@ -3,6 +3,8 @@ package com.branas.domain.usecases;
 import com.branas.api.ports.AccountDAO;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
+import com.branas.domain.usecases.Account.GetAccount;
+import com.branas.domain.valueObjects.Cpf;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -41,7 +43,7 @@ class GetAccountTest {
         account =  Account.create(
                 validPassenger.name(),
                 validPassenger.email(),
-                validPassenger.cpf(),
+                new Cpf(validPassenger.cpf()),
                 validPassenger.carPlate(),
                 validPassenger.isPassenger(),
                 validPassenger.isDriver()

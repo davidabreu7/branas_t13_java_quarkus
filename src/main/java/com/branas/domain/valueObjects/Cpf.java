@@ -1,12 +1,19 @@
-package com.branas.utils;
+package com.branas.domain.valueObjects;
 
-public class CpfValidator {
+public class Cpf {
+    private final String value;
 
-    private CpfValidator() {
-        throw new IllegalStateException("Utility class");
+    public Cpf(String value) {
+        if (!validateCpf(value))
+            throw new IllegalArgumentException("Invalid CPF");
+        this.value = value;
     }
 
-    static public boolean validateCpf(String cpf) {
+    public String getValue() {
+        return value;
+    }
+
+    public static boolean validateCpf(String cpf) {
         if (cpf == null)
             return false;
         cpf = cleanCpf(cpf);
@@ -20,7 +27,7 @@ public class CpfValidator {
         int checkDigit = extractDigit(cpf);
         int calculatedDigit = Integer.parseInt("" + dg1 + dg2);
         return checkDigit == calculatedDigit;
-        }
+    }
 
     private static int extractDigit(String cpf) {
         return Integer.parseInt(cpf.substring(cpf.length() - 2));
@@ -41,8 +48,8 @@ public class CpfValidator {
     private static int calculateDigit(String cpf, int factor) {
         int sum = 0;
         for (String digit : cpf.split("")) {
-         if (factor > 1)
-             sum += Integer.parseInt(digit) * factor--;
+            if (factor > 1)
+                sum += Integer.parseInt(digit) * factor--;
         }
         int result = sum % 11;
         return result < 2 ? 0 : 11 - result;

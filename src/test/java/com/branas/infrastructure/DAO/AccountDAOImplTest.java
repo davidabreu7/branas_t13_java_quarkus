@@ -3,6 +3,7 @@ package com.branas.infrastructure.DAO;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
 import com.branas.api.ports.AccountDAO;
+import com.branas.domain.valueObjects.Cpf;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -48,7 +49,7 @@ class AccountDAOImplTest {
         Account account = Account.create(
                 validPassenger.name(),
                 VALID_EMAIL,
-                validPassenger.cpf(),
+                new Cpf(validPassenger.cpf()),
                 validPassenger.carPlate(),
                 validPassenger.isPassenger(),
                 validPassenger.isDriver()
@@ -66,7 +67,7 @@ class AccountDAOImplTest {
         Account account = Account.create(
                 validPassenger.name(),
                 validPassenger.email(),
-                validPassenger.cpf(),
+                new Cpf(validPassenger.cpf()),
                 validPassenger.carPlate(),
                 validPassenger.isPassenger(),
                 validPassenger.isDriver()

@@ -1,6 +1,6 @@
 package com.branas.infrastructure.DAO;
 
-import com.branas.domain.entities.Coordinate;
+import com.branas.domain.valueObjects.Coordinate;
 import com.branas.domain.entities.Ride;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;

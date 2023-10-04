@@ -1,9 +1,7 @@
 package com.branas.utils;
 
-import com.branas.domain.entities.Coordinate;
+import com.branas.domain.valueObjects.Coordinate;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class RideTestValues {

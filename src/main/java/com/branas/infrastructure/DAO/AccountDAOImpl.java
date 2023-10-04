@@ -1,7 +1,7 @@
 package com.branas.infrastructure.DAO;
 
-import com.branas.domain.entities.Account;
 import com.branas.api.ports.AccountDAO;
+import com.branas.domain.entities.Account;
 import com.branas.infrastructure.exceptions.DataBaseException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,7 +26,7 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     public Account getAccountByEmail(String email) {
-        Account existingAccount = null;
+        Account existingAccount;
         ResultSet result;
         try (PreparedStatement statement = getConnection().prepareStatement("select * from cccat13.account where email = ?")) {
             statement.setString(1, email);
@@ -43,7 +43,7 @@ public class AccountDAOImpl implements AccountDAO {
             insertStatement.setObject(1, input.getAccountId());
             insertStatement.setString(2, input.getName());
             insertStatement.setString(3, input.getEmail());
-            insertStatement.setString(4, input.getCpf());
+            insertStatement.setString(4, input.getCpf().getValue());
             insertStatement.setString(5, input.getCarPlate());
             insertStatement.setBoolean(6, input.isPassenger());
             insertStatement.setBoolean(7, input.isDriver());
@@ -58,7 +58,7 @@ public class AccountDAOImpl implements AccountDAO {
 
     public Optional<Account> getAccountById(UUID accountId){
         ResultSet result;
-        Account account = null;
+        Account account;
         try (PreparedStatement statement = getConnection().prepareStatement("select * from cccat13.account where account_id = ?")) {
             statement.setObject(1, accountId);
             result = statement.executeQuery();

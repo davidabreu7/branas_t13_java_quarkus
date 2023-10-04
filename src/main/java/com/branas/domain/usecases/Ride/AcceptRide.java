@@ -1,4 +1,4 @@
-package com.branas.domain.usecases;
+package com.branas.domain.usecases.Ride;
 
 import com.branas.api.ports.AccountDAO;
 import com.branas.api.ports.RideDAO;
@@ -19,7 +19,7 @@ public class AcceptRide {
     @Inject
     AccountDAO accountDAO;
 
-    public Ride exceute(String driverId, String rideId) {
+    public Ride execute(String driverId, String rideId) {
         Account driver = accountDAO.getAccountById(UUID.fromString(driverId))
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
         Ride ride = rideDAO.getRideById(UUID.fromString(rideId))

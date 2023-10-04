@@ -5,6 +5,8 @@ import com.branas.api.ports.RideDAO;
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
+import com.branas.domain.usecases.Ride.RequestRide;
+import com.branas.domain.valueObjects.Cpf;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -41,7 +43,7 @@ class RequestRideTest {
         account = Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
-                VALID_CPF.value(),
+                new Cpf(VALID_CPF.value()),
                 VALID_PLATE.value(),
                 true,
                 false
@@ -90,7 +92,7 @@ class RequestRideTest {
         Account account = Account.create(
                 VALID_NAME.value(),
                 VALID_EMAIL,
-                VALID_CPF.value(),
+                new Cpf(VALID_CPF.value()),
                 VALID_PLATE.value(),
                 false,
                 false
