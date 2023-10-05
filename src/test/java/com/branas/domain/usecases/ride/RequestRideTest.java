@@ -1,11 +1,11 @@
-package com.branas.domain.usecases;
+package com.branas.domain.usecases.ride;
 
 import com.branas.api.ports.AccountDAO;
 import com.branas.api.ports.RideDAO;
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.usecases.Ride.RequestRide;
+import com.branas.domain.usecases.ride.RequestRide;
 import com.branas.domain.valueObjects.Cpf;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;

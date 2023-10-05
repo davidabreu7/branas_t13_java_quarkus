@@ -1,5 +1,6 @@
 package com.branas.infrastructure.DAO;
 
+import com.branas.domain.enums.RideStateEnum;
 import com.branas.domain.valueObjects.Coordinate;
 import com.branas.domain.entities.Ride;
 import io.quarkus.test.junit.QuarkusTest;
@@ -61,6 +62,6 @@ class RideDAOImplTest {
                 .hasFieldOrPropertyWithValue("rideId", ride.getRideId())
                 .hasFieldOrPropertyWithValue("passengerId", PASSENGER_ID)
                 .hasFieldOrPropertyWithValue("driverId", DRIVER_ID)
-                .hasFieldOrPropertyWithValue("status", "ACCEPTED");
+                .hasFieldOrPropertyWithValue("status", RideStateEnum.ACCEPTED);
     }
 }

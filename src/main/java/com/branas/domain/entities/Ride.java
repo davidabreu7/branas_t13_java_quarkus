@@ -1,7 +1,10 @@
 package com.branas.domain.entities;
 
+import com.branas.domain.enums.RideStateEnum;
 import com.branas.domain.valueObjects.Coordinate;
-import com.branas.infrastructure.exceptions.ValidationErrorException;
+import com.branas.domain.valueObjects.rideStatus.RideStatus;
+import com.branas.domain.valueObjects.rideStatus.RideStatusFactory;
+import com.branas.domain.valueObjects.rideStatus.RideStatusRequested;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -16,14 +19,14 @@ import java.util.UUID;
 public class Ride {
 
     private UUID rideId;
-    private UUID passengerId;
+    private final UUID passengerId;
     private UUID driverId;
-    private String status;
+    private RideStatus status;
     private Double distance;
     private BigDecimal price;
     private LocalDateTime timestamp;
-    private Coordinate fromCoordinate;
-    private Coordinate toCoordinate;
+    private final Coordinate fromCoordinate;
+    private final Coordinate toCoordinate;
 
     private Ride(
             UUID passengerId,
@@ -41,7 +44,7 @@ public class Ride {
             Coordinate toCoordinate) {
     Ride ride = new Ride(passengerId, fromCoordinate, toCoordinate);
         ride.rideId = UUID.randomUUID();
-        ride.status = "REQUESTED";
+        ride.status = new RideStatusRequested(ride);
         ride.timestamp = LocalDateTime.now();
         ride.distance= 0.0;
         return ride;
@@ -61,7 +64,7 @@ public class Ride {
         Ride ride = new Ride(passengerId, fromCoordinate, toCoordinate);
         ride.rideId = rideId;
         ride.driverId = driverId;
-        ride.status = status;
+        ride.status = RideStatusFactory.createStatus(ride, status);
         ride.distance = distance;
         ride.price = price;
         ride.timestamp = timestamp;
@@ -69,10 +72,14 @@ public class Ride {
     }
 
     public void accept(UUID driverId) {
-        if (!status.equals("REQUESTED")) {
-            throw new ValidationErrorException("Ride is not requested");
-        }
         this.driverId = driverId;
-        this.status = "ACCEPTED";
+        this.status = status.process(this.status);
+    }
+    public void changeStatus(RideStatus rideStatus) {
+        this.status = rideStatus;
+    }
+
+    public RideStateEnum getStatus() {
+        return status.getRideStatus();
     }
 }

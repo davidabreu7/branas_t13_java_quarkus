@@ -1,4 +1,4 @@
-package com.branas.domain.usecases.Account;
+package com.branas.domain.usecases.account;
 
 import com.branas.api.ports.AccountDAO;
 import com.branas.domain.entities.Account;

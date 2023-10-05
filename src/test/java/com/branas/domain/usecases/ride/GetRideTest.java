@@ -1,9 +1,9 @@
-package com.branas.domain.usecases;
+package com.branas.domain.usecases.ride;
 
 import com.branas.api.ports.RideDAO;
 import com.branas.domain.valueObjects.Coordinate;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.usecases.Ride.GetRide;
+import com.branas.domain.usecases.ride.GetRide;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;

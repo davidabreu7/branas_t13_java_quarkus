@@ -1,10 +1,11 @@
-package com.branas.domain.usecases;
+package com.branas.domain.usecases.ride;
 
 import com.branas.api.ports.AccountDAO;
 import com.branas.api.ports.RideDAO;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.usecases.Ride.AcceptRide;
+import com.branas.domain.enums.RideStateEnum;
+import com.branas.domain.usecases.ride.AcceptRide;
 import com.branas.domain.valueObjects.Cpf;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -83,7 +84,7 @@ class AcceptRideTest {
         assertThat(acceptedRide)
                 .isNotNull()
                 .isInstanceOf(Ride.class)
-                .hasFieldOrPropertyWithValue("status", "ACCEPTED")
+                .hasFieldOrPropertyWithValue("status", RideStateEnum.ACCEPTED)
                 .hasFieldOrPropertyWithValue("driverId", driver.getAccountId());
     }
 

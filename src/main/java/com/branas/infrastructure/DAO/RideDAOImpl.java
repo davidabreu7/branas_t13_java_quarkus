@@ -1,8 +1,8 @@
 package com.branas.infrastructure.DAO;
 
-import com.branas.domain.valueObjects.Coordinate;
-import com.branas.domain.entities.Ride;
 import com.branas.api.ports.RideDAO;
+import com.branas.domain.entities.Ride;
+import com.branas.domain.valueObjects.Coordinate;
 import com.branas.infrastructure.exceptions.DataBaseException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -34,7 +34,7 @@ public class RideDAOImpl implements RideDAO {
             preparedStatement.setObject(1, ride.getRideId());
             preparedStatement.setObject(2, ride.getPassengerId());
             preparedStatement.setObject(3, ride.getDriverId());
-            preparedStatement.setString(4, ride.getStatus());
+            preparedStatement.setString(4, ride.getStatus().getValue());
             preparedStatement.setBigDecimal(5, ride.getPrice());
             preparedStatement.setDouble(6, ride.getDistance());
             preparedStatement.setObject(7, ride.getTimestamp());
@@ -67,7 +67,7 @@ public class RideDAOImpl implements RideDAO {
                 where ride_id = ?""")) {
             preparedStatement.setObject(1, ride.getPassengerId());
             preparedStatement.setObject(2, ride.getDriverId());
-            preparedStatement.setString(3, ride.getStatus());
+            preparedStatement.setString(3, ride.getStatus().getValue());
             preparedStatement.setBigDecimal(4, ride.getPrice());
             preparedStatement.setDouble(5, ride.getDistance());
             preparedStatement.setObject(6, ride.getTimestamp());

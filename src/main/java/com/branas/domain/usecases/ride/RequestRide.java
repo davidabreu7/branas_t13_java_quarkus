@@ -1,4 +1,4 @@
-package com.branas.domain.usecases.Ride;
+package com.branas.domain.usecases.ride;
 
 import com.branas.api.ports.AccountDAO;
 import com.branas.api.ports.RideDAO;

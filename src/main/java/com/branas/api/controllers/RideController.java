@@ -2,9 +2,9 @@ package com.branas.api.controllers;
 
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.usecases.Ride.AcceptRide;
-import com.branas.domain.usecases.Ride.GetRide;
-import com.branas.domain.usecases.Ride.RequestRide;
+import com.branas.domain.usecases.ride.AcceptRide;
+import com.branas.domain.usecases.ride.GetRide;
+import com.branas.domain.usecases.ride.RequestRide;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

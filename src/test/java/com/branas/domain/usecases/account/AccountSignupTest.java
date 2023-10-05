@@ -1,9 +1,9 @@
-package com.branas.domain.usecases;
+package com.branas.domain.usecases.account;
 
 import com.branas.api.ports.AccountDAO;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
-import com.branas.domain.usecases.Account.AccountSignup;
+import com.branas.domain.usecases.account.AccountSignup;
 import com.branas.domain.valueObjects.Cpf;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;
