@@ -7,24 +7,21 @@ import com.branas.infrastructure.exceptions.ValidationErrorException;
 public class RideStatusRequested implements RideStatus {
 
     private RideStateEnum value;
-    private Ride ride;
 
-    public RideStatusRequested(Ride ride) {
+    public RideStatusRequested() {
         value = RideStateEnum.REQUESTED;
-        ride.changeStatus(this);
-        this.ride = ride;
     }
 
     @Override
     public RideStatus process(RideStatus rideStatus) {
         if (!rideStatus.getRideStatus().equals(RideStateEnum.REQUESTED))
             throw new ValidationErrorException("Ride is not requested");
-        return new RideStatusAccepted(ride);
+        return new RideStatusAccepted();
     }
 
     @Override
     public RideStatus cancel(RideStatus rideStatus) {
-        return new RideStatusCancelled(ride);
+        return new RideStatusCancelled();
     }
 
     @Override

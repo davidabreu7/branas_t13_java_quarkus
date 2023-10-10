@@ -44,7 +44,7 @@ public class Ride {
             Coordinate toCoordinate) {
     Ride ride = new Ride(passengerId, fromCoordinate, toCoordinate);
         ride.rideId = UUID.randomUUID();
-        ride.status = new RideStatusRequested(ride);
+        ride.status = new RideStatusRequested();
         ride.timestamp = LocalDateTime.now();
         ride.distance= 0.0;
         return ride;
@@ -64,7 +64,7 @@ public class Ride {
         Ride ride = new Ride(passengerId, fromCoordinate, toCoordinate);
         ride.rideId = rideId;
         ride.driverId = driverId;
-        ride.status = RideStatusFactory.createStatus(ride, status);
+        ride.status = RideStatusFactory.createStatus(status);
         ride.distance = distance;
         ride.price = price;
         ride.timestamp = timestamp;
@@ -75,11 +75,22 @@ public class Ride {
         this.driverId = driverId;
         this.status = status.process(this.status);
     }
-    public void changeStatus(RideStatus rideStatus) {
-        this.status = rideStatus;
+
+    public void start() {
+        this.status = status.process(this.status);
+    }
+
+    public void cancel() {
+        this.status = status.cancel(this.status);
     }
 
     public RideStateEnum getStatus() {
         return status.getRideStatus();
+    }
+
+    public void finish(Double distance, BigDecimal price) {
+        this.distance = distance;
+        this.price = price;
+        this.status = status.process(this.status);
     }
 }

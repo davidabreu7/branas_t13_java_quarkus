@@ -1,14 +1,12 @@
 package com.branas.domain.valueObjects.rideStatus;
 
-import com.branas.domain.entities.Ride;
 import com.branas.domain.enums.RideStateEnum;
 
 public class RideStatusFinished implements RideStatus {
 
-    private RideStateEnum value;
-    public RideStatusFinished(Ride ride) {
+    private final RideStateEnum value;
+    public RideStatusFinished() {
         value = RideStateEnum.FINISHED;
-        ride.changeStatus(this);
     }
 
     @Override

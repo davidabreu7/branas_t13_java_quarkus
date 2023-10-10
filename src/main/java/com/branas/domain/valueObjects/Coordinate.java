@@ -1,14 +1,19 @@
 package com.branas.domain.valueObjects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.*;
 
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Embeddable
 public class Coordinate {
 
+    @Column(name = "lat")
     private Double latitude;
+    @Column(name = "long")
     private Double longitude;
 
     public Coordinate(Double latitude, Double longitude) {

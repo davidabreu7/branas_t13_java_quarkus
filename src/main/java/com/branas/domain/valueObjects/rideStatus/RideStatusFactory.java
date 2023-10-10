@@ -1,6 +1,5 @@
 package com.branas.domain.valueObjects.rideStatus;
 
-import com.branas.domain.entities.Ride;
 import com.branas.domain.enums.RideStateEnum;
 
 public class RideStatusFactory {
@@ -13,24 +12,24 @@ public class RideStatusFactory {
         rideState = RideStateEnum.valueOf(status);
     }
 
-    public static RideStatus createStatus(Ride ride, String status) {
+    public static RideStatus createStatus(String status) {
 
         RideStatusFactory rideStatusFactory = new RideStatusFactory(status);
         switch (rideStatusFactory.rideState) {
             case REQUESTED -> {
-                return new RideStatusRequested(ride);
+                return new RideStatusRequested();
             }
             case ACCEPTED -> {
-                return new RideStatusAccepted(ride);
+                return new RideStatusAccepted();
             }
             case STARTED -> {
-                return new RideStatusStarted(ride);
+                return new RideStatusStarted();
             }
             case FINISHED -> {
-                return new RideStatusFinished(ride);
+                return new RideStatusFinished();
             }
             case CANCELLED -> {
-                return new RideStatusCancelled(ride);
+                return new RideStatusCancelled();
             }
             default -> throw new IllegalArgumentException("Invalid status");
         }

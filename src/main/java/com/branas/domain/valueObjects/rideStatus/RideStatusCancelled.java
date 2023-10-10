@@ -1,15 +1,13 @@
 package com.branas.domain.valueObjects.rideStatus;
 
-import com.branas.domain.entities.Ride;
 import com.branas.domain.enums.RideStateEnum;
 
 public class RideStatusCancelled implements RideStatus {
 
     private final RideStateEnum value;
 
-    public RideStatusCancelled(Ride ride) {
+    public RideStatusCancelled() {
         value = RideStateEnum.CANCELLED;
-        ride.changeStatus(this);
     }
 
     @Override
