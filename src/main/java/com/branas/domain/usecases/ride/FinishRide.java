@@ -7,12 +7,14 @@ import com.branas.domain.services.DistanceCalculator;
 import com.branas.domain.services.FareCalculator;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import com.branas.infrastructure.repositories.PositionRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+@ApplicationScoped
 public class FinishRide {
 
     @Inject
@@ -20,15 +22,19 @@ public class FinishRide {
     @Inject
     PositionRepository positionRepository;
 
+
     public void execute(String rideId) {
         Ride ride = rideDAO.getRideById(UUID.fromString(rideId))
                 .orElseThrow( () -> new ResourceNotFoundException("Ride not found"));
         if (!ride.getStatus().getValue().equals("STARTED")) {
             throw new IllegalArgumentException("Ride is not STARTED");
         }
-        List<Position> positions = positionRepository.findByRideId(rideId);
+        Position.create(ride.getRideId(),
+                ride.getToCoordinate().getLatitude(),
+                ride.getToCoordinate().getLongitude());
+        List<Position> positions = positionRepository.findByRideId(UUID.fromString(rideId));
         Double totalDistance = calculateTotalDistance(positions);
-        BigDecimal price = BigDecimal.valueOf(FareCalculator.calculate(totalDistance, ride.getTimestamp()));
+        BigDecimal price = BigDecimal.valueOf(FareCalculator.calculate(totalDistance));
         ride.finish(totalDistance, price);
         rideDAO.update(ride);
     }
