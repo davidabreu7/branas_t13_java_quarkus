@@ -4,16 +4,16 @@ import com.branas.domain.valueObjects.Coordinate;
 
 public class DistanceCalculator {
 
+    private DistanceCalculator() {
+    }
     private static final int EARTH_RADIUS_KM = 6371;
-    private Coordinate fromCoordinate;
-    private Coordinate toCoordinate;
 
     public static Double calculate(Coordinate fromCoordinate, Coordinate toCoordinate) {
         // Convert latitude and longitude from degrees to radians
         double lat1Rad = Math.toRadians(fromCoordinate.getLatitude());
         double lon1Rad = Math.toRadians(fromCoordinate.getLongitude());
         double lat2Rad = Math.toRadians(toCoordinate.getLatitude());
-        double lon2Rad = Math.toRadians(toCoordinate.getLatitude());
+        double lon2Rad = Math.toRadians(toCoordinate.getLongitude());
 
         // Haversine formula
         double dLat = lat2Rad - lat1Rad;
@@ -26,4 +26,5 @@ public class DistanceCalculator {
 
         return distanceKm;
     }
+
 }

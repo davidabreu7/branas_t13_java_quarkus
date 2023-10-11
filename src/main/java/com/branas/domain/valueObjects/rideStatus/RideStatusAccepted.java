@@ -1,6 +1,5 @@
 package com.branas.domain.valueObjects.rideStatus;
 
-import com.branas.domain.entities.Ride;
 import com.branas.domain.enums.RideStateEnum;
 import com.branas.infrastructure.exceptions.ValidationErrorException;
 
