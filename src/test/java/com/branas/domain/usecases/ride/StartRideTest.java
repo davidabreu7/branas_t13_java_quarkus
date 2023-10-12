@@ -6,6 +6,7 @@ import com.branas.domain.valueObjects.Coordinate;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,7 @@ class StartRideTest {
     }
 
     @Test
+    @Transactional
     void ShouldStartRide() {
         // Arrange
         String rideId = ride.getRideId().toString();

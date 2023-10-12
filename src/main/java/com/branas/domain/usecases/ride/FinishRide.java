@@ -29,9 +29,10 @@ public class FinishRide {
         if (!ride.getStatus().getValue().equals("STARTED")) {
             throw new IllegalArgumentException("Ride is not STARTED");
         }
-        Position.create(ride.getRideId(),
+        Position toPosition = Position.create(ride.getRideId(),
                 ride.getToCoordinate().getLatitude(),
                 ride.getToCoordinate().getLongitude());
+        positionRepository.persist(toPosition);
         List<Position> positions = positionRepository.findByRideId(UUID.fromString(rideId));
         Double totalDistance = calculateTotalDistance(positions);
         BigDecimal price = BigDecimal.valueOf(FareCalculator.calculate(totalDistance));
