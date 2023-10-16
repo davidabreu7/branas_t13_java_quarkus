@@ -1,32 +1,29 @@
 package com.branas.infrastructure.repositories;
 
-import com.branas.domain.entities.Position;
+import com.branas.infrastructure.jpaEntities.PositionEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
-class PositionRepositoryTest {
+class PositionRepositoryJpaTest {
 
     @Inject
-    PositionRepository positionRepository;
-    Position position1;
-    Position position2;
+    PositionRepositoryJpa positionRepository;
+    PositionEntity position1;
+    PositionEntity position2;
     @BeforeEach
     void setUp() {
         UUID rideId = UUID.randomUUID();
-        position1 = Position.create(rideId, 1.0, 1.0);
-        position2 = Position.create(rideId, 2.0, 2.0);
-
+        position1 = PositionEntity.create(rideId, 1.0, 1.0);
+        position2 = PositionEntity.create(rideId, 2.0, 2.0);
     }
 
     @Test

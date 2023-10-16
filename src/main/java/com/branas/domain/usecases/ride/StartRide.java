@@ -1,11 +1,11 @@
 package com.branas.domain.usecases.ride;
 
+import com.branas.api.ports.PositionRepository;
 import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Position;
 import com.branas.domain.entities.Ride;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import com.branas.infrastructure.exceptions.ValidationErrorException;
-import com.branas.infrastructure.repositories.PositionRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -28,7 +28,7 @@ public class StartRide {
         Position position = Position.create(ride.getRideId(),
                 ride.getFromCoordinate().getLatitude(),
                 ride.getFromCoordinate().getLongitude());
-        positionRepository.persist(position);
+        positionRepository.save(position);
         ride.start();
         rideRepository.update(ride);
     }

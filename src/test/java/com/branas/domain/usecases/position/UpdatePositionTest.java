@@ -1,10 +1,10 @@
 package com.branas.domain.usecases.position;
 
+import com.branas.api.ports.PositionRepository;
 import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Position;
 import com.branas.domain.entities.Ride;
 import com.branas.domain.valueObjects.Coordinate;
-import com.branas.infrastructure.repositories.PositionRepository;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +56,7 @@ class UpdatePositionTest {
         Position toCoordinatePosition = Position.create(ride.getRideId(),
                 toCoordinate.getLatitude(),
                 toCoordinate.getLongitude());
-        positionRepository.persist(toCoordinatePosition);
+        positionRepository.save(toCoordinatePosition);
         ride.accept(driverId);
         ride.start();
        Position position1 = updatePosition.execute(ride.getRideId().toString(),

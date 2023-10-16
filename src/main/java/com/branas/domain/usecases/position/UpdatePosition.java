@@ -1,9 +1,10 @@
 package com.branas.domain.usecases.position;
 
+import com.branas.api.ports.PositionRepository;
 import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Position;
 import com.branas.domain.entities.Ride;
-import com.branas.infrastructure.repositories.PositionRepository;
+import com.branas.infrastructure.repositories.PositionRepositoryJpa;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -26,7 +27,7 @@ public class UpdatePosition {
         Position position = Position.create(ride.getRideId(),
                 latitude,
                 longitude);
-        positionRepository.persist(position);
+        positionRepository.save(position);
         return position;
     }
 }

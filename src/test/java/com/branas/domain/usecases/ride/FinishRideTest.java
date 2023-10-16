@@ -1,10 +1,11 @@
 package com.branas.domain.usecases.ride;
 
+import com.branas.api.ports.PositionRepository;
 import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Position;
 import com.branas.domain.entities.Ride;
 import com.branas.domain.valueObjects.Coordinate;
-import com.branas.infrastructure.repositories.PositionRepository;
+import com.branas.infrastructure.repositories.PositionRepositoryJpa;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;

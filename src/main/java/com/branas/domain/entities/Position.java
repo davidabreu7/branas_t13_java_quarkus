@@ -1,10 +1,7 @@
 package com.branas.domain.entities;
 
 import com.branas.domain.valueObjects.Coordinate;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.branas.infrastructure.jpaEntities.PositionEntity;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -13,18 +10,12 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Getter
-@Entity
-@Table(name = "position")
 @ToString
 public class Position {
 
-    @Id
-    @Column(name = "position_id")
     private UUID id;
-    @Column(name = "ride_id")
     private final UUID rideId;
     private final Coordinate coordinate;
-    @Column(name = "date")
     private LocalDateTime timestamp;
 
     public Position() {
@@ -41,6 +32,13 @@ public class Position {
         Position position = new Position(rideId, new Coordinate(latitude, longitude));
         position.id = UUID.randomUUID();
         position.timestamp = LocalDateTime.now();
+        return position;
+    }
+
+    public static Position restore(PositionEntity positionEntity) {
+        Position position = new Position(positionEntity.getRideId(), positionEntity.getCoordinate());
+        position.id = positionEntity.getId();
+        position.timestamp = positionEntity.getTimestamp();
         return position;
     }
 

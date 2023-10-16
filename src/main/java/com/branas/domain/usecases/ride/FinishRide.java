@@ -1,12 +1,13 @@
 package com.branas.domain.usecases.ride;
 
+import com.branas.api.ports.PositionRepository;
 import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Position;
 import com.branas.domain.entities.Ride;
 import com.branas.domain.services.DistanceCalculator;
 import com.branas.domain.services.FareCalculator;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
-import com.branas.infrastructure.repositories.PositionRepository;
+import com.branas.infrastructure.repositories.PositionRepositoryJpa;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -32,7 +33,7 @@ public class FinishRide {
         Position toPosition = Position.create(ride.getRideId(),
                 ride.getToCoordinate().getLatitude(),
                 ride.getToCoordinate().getLongitude());
-        positionRepository.persist(toPosition);
+        positionRepository.save(toPosition);
         List<Position> positions = positionRepository.findByRideId(UUID.fromString(rideId));
         Double totalDistance = calculateTotalDistance(positions);
         BigDecimal price = BigDecimal.valueOf(FareCalculator.calculate(totalDistance));
