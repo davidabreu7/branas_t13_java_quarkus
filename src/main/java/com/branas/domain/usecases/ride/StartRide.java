@@ -1,6 +1,6 @@
 package com.branas.domain.usecases.ride;
 
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Position;
 import com.branas.domain.entities.Ride;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
@@ -15,12 +15,12 @@ import java.util.UUID;
 public class StartRide {
 
     @Inject
-    RideDAO rideDAO;
+    RideRepository rideRepository;
     @Inject
     PositionRepository positionRepository;
 
     public void execute(String rideId) {
-        Ride ride = rideDAO.getRideById(UUID.fromString(rideId))
+        Ride ride = rideRepository.getRideById(UUID.fromString(rideId))
                 .orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
         if (!ride.getStatus().getValue().equals("ACCEPTED")) {
             throw new ValidationErrorException("Ride is not ACCEPTED");
@@ -30,6 +30,6 @@ public class StartRide {
                 ride.getFromCoordinate().getLongitude());
         positionRepository.persist(position);
         ride.start();
-        rideDAO.update(ride);
+        rideRepository.update(ride);
     }
 }

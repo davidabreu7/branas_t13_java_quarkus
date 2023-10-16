@@ -5,6 +5,7 @@ import com.branas.domain.valueObjects.Coordinate;
 import com.branas.domain.valueObjects.rideStatus.RideStatus;
 import com.branas.domain.valueObjects.rideStatus.RideStatusFactory;
 import com.branas.domain.valueObjects.rideStatus.RideStatusRequested;
+import com.branas.infrastructure.jpaEntities.RideEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -69,6 +70,20 @@ public class Ride {
         ride.price = price;
         ride.timestamp = timestamp;
         return ride;
+    }
+
+    public static Ride restore(RideEntity rideEntity) {
+        return Ride.restore(
+                rideEntity.getRideId(),
+                rideEntity.getPassengerId(),
+                rideEntity.getDriverId(),
+                rideEntity.getStatus().getValue(),
+                rideEntity.getDistance(),
+                rideEntity.getPrice(),
+                rideEntity.getTimestamp(),
+                new Coordinate(rideEntity.getFromLatitude(), rideEntity.getFromLongitude()),
+                new Coordinate(rideEntity.getToLatitude(), rideEntity.getToLongitude())
+        );
     }
 
     public void accept(UUID driverId) {

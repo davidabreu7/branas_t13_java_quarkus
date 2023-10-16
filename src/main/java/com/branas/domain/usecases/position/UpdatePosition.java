@@ -1,6 +1,6 @@
 package com.branas.domain.usecases.position;
 
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Position;
 import com.branas.domain.entities.Ride;
 import com.branas.infrastructure.repositories.PositionRepository;
@@ -15,10 +15,10 @@ public class UpdatePosition {
     @Inject
     PositionRepository positionRepository;
     @Inject
-    RideDAO rideDAO;
+    RideRepository rideRepository;
 
     public Position execute(String rideId, Double latitude, Double longitude) {
-        Ride ride = rideDAO.getRideById(UUID.fromString(rideId))
+        Ride ride = rideRepository.getRideById(UUID.fromString(rideId))
                 .orElseThrow(() -> new IllegalArgumentException("Ride not found"));
         if (!ride.getStatus().getValue().equals("STARTED")) {
             throw new IllegalArgumentException("Ride is not STARTED");

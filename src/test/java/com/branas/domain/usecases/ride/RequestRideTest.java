@@ -1,11 +1,10 @@
 package com.branas.domain.usecases.ride;
 
 import com.branas.api.ports.AccountDAO;
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.usecases.ride.RequestRide;
 import com.branas.domain.valueObjects.Cpf;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;
@@ -31,7 +30,7 @@ class RequestRideTest {
     @Inject
     RequestRide requestRide;
     @InjectMock
-    RideDAO rideDAO;
+    RideRepository rideRepository;
     @InjectMock
     AccountDAO accountDAO;
     String VALID_EMAIL;
@@ -54,9 +53,9 @@ class RequestRideTest {
                 TO_COORDINATE
         );
         doNothing()
-                .when(rideDAO)
+                .when(rideRepository)
                 .save(any(Ride.class));
-        when(rideDAO.getRideById(any(UUID.class)))
+        when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
     }
 
@@ -113,7 +112,7 @@ class RequestRideTest {
                 FROM_COORDINATE,
                 TO_COORDINATE
         );
-        when(rideDAO.getRideByPassengerId(any(UUID.class)))
+        when(rideRepository.getRideByPassengerId(any(UUID.class)))
                 .thenReturn(ride);
         when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(Optional.of(account));

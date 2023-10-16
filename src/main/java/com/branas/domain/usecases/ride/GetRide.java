@@ -1,6 +1,6 @@
 package com.branas.domain.usecases.ride;
 
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Ride;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,10 +12,10 @@ import java.util.UUID;
 public class GetRide {
 
     @Inject
-    RideDAO rideDAO;
+    RideRepository rideRepository;
 
     public Ride execute(String rideId) {
-        return rideDAO.getRideById(UUID.fromString(rideId))
+        return rideRepository.getRideById(UUID.fromString(rideId))
                 .orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
     }
 }

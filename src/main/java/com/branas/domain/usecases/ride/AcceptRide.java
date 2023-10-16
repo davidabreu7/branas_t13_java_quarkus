@@ -1,7 +1,7 @@
 package com.branas.domain.usecases.ride;
 
 import com.branas.api.ports.AccountDAO;
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
@@ -15,14 +15,14 @@ import java.util.UUID;
 public class AcceptRide {
 
     @Inject
-    RideDAO rideDAO;
+    RideRepository rideRepository;
     @Inject
     AccountDAO accountDAO;
 
     public Ride execute(String driverId, String rideId) {
         Account driver = accountDAO.getAccountById(UUID.fromString(driverId))
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
-        Ride ride = rideDAO.getRideById(UUID.fromString(rideId))
+        Ride ride = rideRepository.getRideById(UUID.fromString(rideId))
                 .orElseThrow(() -> new ResourceNotFoundException("Ride not found"));
         if (driver == null) {
             throw new ResourceNotFoundException("Driver not found");
@@ -30,11 +30,11 @@ public class AcceptRide {
         if (!driver.isDriver()) {
             throw new ValidationErrorException("Account is not a driver");
         }
-        if (rideDAO.getRideByDriverId(driver.getAccountId()) != null) {
+        if (rideRepository.getRideByDriverId(driver.getAccountId()) != null) {
             throw new ValidationErrorException("Driver already has a ride");
         }
         ride.accept(driver.getAccountId());
-        rideDAO.update(ride);
+        rideRepository.update(ride);
         return ride;
     }
 }

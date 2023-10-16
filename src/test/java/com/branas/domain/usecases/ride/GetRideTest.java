@@ -1,9 +1,8 @@
 package com.branas.domain.usecases.ride;
 
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.valueObjects.Coordinate;
 import com.branas.domain.entities.Ride;
-import com.branas.domain.usecases.ride.GetRide;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -24,7 +23,7 @@ class GetRideTest {
     GetRide getRide;
 
     @InjectMock
-    RideDAO rideDAO;
+    RideRepository rideRepository;
 
     Coordinate from;
     Coordinate to;
@@ -38,7 +37,7 @@ class GetRideTest {
                 passengerId,
                 from,
                 to);
-        when(rideDAO.getRideById(any(UUID.class)))
+        when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
         Assertions.assertThat(getRide.execute(String.valueOf(passengerId)))
                 .isNotNull()
@@ -50,7 +49,7 @@ class GetRideTest {
     @Test
     void shouldThrowResourceNotFoundException() {
         UUID passengerId = UUID.randomUUID();
-        when(rideDAO.getRideById(any(UUID.class)))
+        when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.empty());
         Assertions.assertThatThrownBy(() -> getRide.execute(String.valueOf(passengerId)))
                 .isInstanceOf(ResourceNotFoundException.class)

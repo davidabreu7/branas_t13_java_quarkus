@@ -1,11 +1,10 @@
 package com.branas.domain.usecases.ride;
 
 import com.branas.api.ports.AccountDAO;
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
 import com.branas.domain.enums.RideStateEnum;
-import com.branas.domain.usecases.ride.AcceptRide;
 import com.branas.domain.valueObjects.Cpf;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -30,7 +29,7 @@ class AcceptRideTest {
     @Inject
     AcceptRide acceptRide;
     @InjectMock
-    RideDAO rideDAO;
+    RideRepository rideRepository;
     @InjectMock
     AccountDAO accountDAO;
     String VALID_EMAIL;
@@ -53,9 +52,9 @@ class AcceptRideTest {
                 TO_COORDINATE
         );
         doNothing()
-                .when(rideDAO)
+                .when(rideRepository)
                 .save(any(Ride.class));
-        when(rideDAO.getRideById(any(UUID.class)))
+        when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
     }
 
@@ -76,7 +75,7 @@ class AcceptRideTest {
                 false,
                 true
         );
-        when(rideDAO.getRideById(any(UUID.class)))
+        when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
         when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(Optional.of(driver));
@@ -99,7 +98,7 @@ class AcceptRideTest {
                 true
         );
 
-        when(rideDAO.getRideById(any(UUID.class)))
+        when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.empty());
         when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(Optional.of(driver));
@@ -122,9 +121,9 @@ class AcceptRideTest {
                 FROM_COORDINATE,
                 TO_COORDINATE
         );
-        when(rideDAO.getRideByPassengerId(any(UUID.class)))
+        when(rideRepository.getRideByPassengerId(any(UUID.class)))
                 .thenReturn(newRide);
-        when(rideDAO.getRideById(any(UUID.class)))
+        when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
         VALID_EMAIL = "john.doe%d@gmail.com".formatted(System.currentTimeMillis());
         Account driver = Account.create(
@@ -136,11 +135,11 @@ class AcceptRideTest {
                 true
         );
         driver.setAccountId(UUID.randomUUID());
-        when(rideDAO.getRideById(any(UUID.class)))
+        when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
         when(accountDAO.getAccountById(any(UUID.class)))
                 .thenReturn(Optional.of(driver));
-        when(rideDAO.getRideByDriverId(any(UUID.class)))
+        when(rideRepository.getRideByDriverId(any(UUID.class)))
                 .thenReturn(ride);
         String driverId = newRide.getRideId().toString();
         String rideId = driver.getAccountId().toString();

@@ -1,10 +1,11 @@
 package com.branas.domain.usecases.ride;
 
 import com.branas.api.ports.AccountDAO;
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
+import com.branas.domain.enums.RideStateEnum;
 import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import com.branas.infrastructure.exceptions.ValidationErrorException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class RequestRide {
 
     @Inject
-    RideDAO rideDAO;
+    RideRepository rideRepository;
     @Inject
     AccountDAO accountDAO;
 
@@ -29,7 +30,7 @@ public class RequestRide {
                 ridePath.fromCoordinate(),
                 ridePath.toCoordinate()
         );
-        rideDAO.save(ride);
+        rideRepository.save(ride);
         return ride;
     }
 
@@ -41,8 +42,8 @@ public class RequestRide {
         if (account.isDriver() || !account.isPassenger()) {
             throw new ValidationErrorException("Driver cannot request a ride");
         }
-        Ride latestRide = rideDAO.getRideByPassengerId(account.getAccountId());
-        if (latestRide != null && !latestRide.getStatus().equals("COMPLETED")) {
+        Ride latestRide = rideRepository.getRideByPassengerId(account.getAccountId());
+        if (latestRide != null && !latestRide.getStatus().equals(RideStateEnum.FINISHED)) {
             throw new ValidationErrorException("Passenger already has a requested ride");
         }
     }

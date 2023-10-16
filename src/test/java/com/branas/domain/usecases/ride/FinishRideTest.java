@@ -1,6 +1,6 @@
 package com.branas.domain.usecases.ride;
 
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Position;
 import com.branas.domain.entities.Ride;
 import com.branas.domain.valueObjects.Coordinate;
@@ -8,7 +8,6 @@ import com.branas.infrastructure.repositories.PositionRepository;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,7 +26,7 @@ class FinishRideTest {
     @Inject
     FinishRide finishRide;
     @InjectMock
-    RideDAO rideDAO;
+    RideRepository rideRepository;
     @InjectMock
     PositionRepository positionRepository;
     Ride ride;
@@ -48,7 +47,7 @@ class FinishRideTest {
                 Position.create(ride.getRideId(), 39.9496, -75.1503)
         );
 
-        when(rideDAO.getRideById(ride.getRideId()))
+        when(rideRepository.getRideById(ride.getRideId()))
                 .thenReturn(java.util.Optional.of(ride));
         when(positionRepository.findByRideId(ride.getRideId()))
                 .thenReturn(positions);
@@ -66,7 +65,7 @@ class FinishRideTest {
         // Act
         finishRide.execute(rideId);
         // Assert
-        Mockito.verify(rideDAO, times(1)).update(ride);
+        Mockito.verify(rideRepository, times(1)).update(ride);
         assertThat(ride.getStatus().getValue())
                 .isEqualTo("FINISHED");
         assertThat(ride.getDistance())
@@ -117,7 +116,7 @@ class FinishRideTest {
         ride.accept(driverId);
         ride.start();
         // Act
-        when(rideDAO.getRideById(UUID.fromString(rideId)))
+        when(rideRepository.getRideById(UUID.fromString(rideId)))
                 .thenReturn(java.util.Optional.of(ride));
         finishRide.execute(rideId);
         // Assert

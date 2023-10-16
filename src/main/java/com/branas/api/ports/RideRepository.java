@@ -5,7 +5,7 @@ import com.branas.domain.entities.Ride;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface RideDAO {
+public interface RideRepository {
 
     public void save(Ride ride);
     public Optional<Ride> getRideById(UUID rideId);

@@ -15,25 +15,12 @@ public class RideStatusFactory {
     public static RideStatus createStatus(String status) {
 
         RideStatusFactory rideStatusFactory = new RideStatusFactory(status);
-        switch (rideStatusFactory.rideState) {
-            case REQUESTED -> {
-                return new RideStatusRequested();
-            }
-            case ACCEPTED -> {
-                return new RideStatusAccepted();
-            }
-            case STARTED -> {
-                return new RideStatusStarted();
-            }
-            case FINISHED -> {
-                return new RideStatusFinished();
-            }
-            case CANCELLED -> {
-                return new RideStatusCancelled();
-            }
-            default -> throw new IllegalArgumentException("Invalid status");
-        }
-
+        return switch (rideStatusFactory.rideState) {
+            case REQUESTED -> new RideStatusRequested();
+            case ACCEPTED -> new RideStatusAccepted();
+            case STARTED ->  new RideStatusStarted();
+            case FINISHED -> new RideStatusFinished();
+            case CANCELLED -> new RideStatusCancelled();
+        };
     }
-
 }

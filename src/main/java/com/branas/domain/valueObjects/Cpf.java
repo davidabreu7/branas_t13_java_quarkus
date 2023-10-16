@@ -1,16 +1,22 @@
 package com.branas.domain.valueObjects;
 
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
+
+@Getter
+@Embeddable
 public class Cpf {
+
     private final String value;
+
+    public Cpf() {
+        this.value = null;
+    }
 
     public Cpf(String value) {
         if (!validateCpf(value))
             throw new IllegalArgumentException("Invalid CPF");
         this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     public static boolean validateCpf(String cpf) {

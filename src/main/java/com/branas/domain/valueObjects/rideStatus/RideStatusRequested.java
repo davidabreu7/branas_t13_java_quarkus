@@ -3,7 +3,7 @@ package com.branas.domain.valueObjects.rideStatus;
 import com.branas.domain.enums.RideStateEnum;
 import com.branas.infrastructure.exceptions.ValidationErrorException;
 
-public class RideStatusRequested implements RideStatus {
+public final class RideStatusRequested implements RideStatus {
 
     private RideStateEnum value;
 

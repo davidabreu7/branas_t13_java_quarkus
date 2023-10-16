@@ -2,7 +2,7 @@ package com.branas.domain.valueObjects.rideStatus;
 
 import com.branas.domain.enums.RideStateEnum;
 
-public class RideStatusStarted implements RideStatus {
+public final class RideStatusStarted implements RideStatus {
 
     private final RideStateEnum value;
     public RideStatusStarted() {

@@ -1,6 +1,6 @@
 package com.branas.domain.usecases.ride;
 
-import com.branas.api.ports.RideDAO;
+import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Position;
 import com.branas.domain.entities.Ride;
 import com.branas.domain.services.DistanceCalculator;
@@ -18,13 +18,13 @@ import java.util.UUID;
 public class FinishRide {
 
     @Inject
-    public RideDAO rideDAO;
+    public RideRepository rideRepository;
     @Inject
     PositionRepository positionRepository;
 
 
     public void execute(String rideId) {
-        Ride ride = rideDAO.getRideById(UUID.fromString(rideId))
+        Ride ride = rideRepository.getRideById(UUID.fromString(rideId))
                 .orElseThrow( () -> new ResourceNotFoundException("Ride not found"));
         if (!ride.getStatus().getValue().equals("STARTED")) {
             throw new IllegalArgumentException("Ride is not STARTED");
@@ -37,7 +37,7 @@ public class FinishRide {
         Double totalDistance = calculateTotalDistance(positions);
         BigDecimal price = BigDecimal.valueOf(FareCalculator.calculate(totalDistance));
         ride.finish(totalDistance, price);
-        rideDAO.update(ride);
+        rideRepository.update(ride);
     }
 
     private Double calculateTotalDistance(List<Position> positions) {
