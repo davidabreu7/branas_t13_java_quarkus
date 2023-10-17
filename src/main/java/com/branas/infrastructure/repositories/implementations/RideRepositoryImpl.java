@@ -1,4 +1,4 @@
-package com.branas.infrastructure.DAO;
+package com.branas.infrastructure.repositories.implementations;
 
 import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Ride;
@@ -7,11 +7,13 @@ import com.branas.infrastructure.jpaEntities.RideEntity;
 import com.branas.infrastructure.repositories.RideRepositoryJpa;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
+@Transactional
 public class RideRepositoryImpl implements RideRepository {
 
     @Inject
@@ -20,7 +22,7 @@ public class RideRepositoryImpl implements RideRepository {
     @Override
     public void save(Ride ride) {
         RideEntity rideEntity = RideEntity.create(ride);
-        rideRepositoryJpa.persistAndFlush(rideEntity);
+        rideRepositoryJpa.persist(rideEntity);
     }
 
     @Override

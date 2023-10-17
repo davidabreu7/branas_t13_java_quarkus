@@ -1,12 +1,11 @@
 package com.branas.domain.usecases.ride;
 
-import com.branas.api.ports.AccountDAO;
+import com.branas.api.ports.AccountRepository;
 import com.branas.api.ports.RideRepository;
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
 import com.branas.domain.valueObjects.Cpf;
-import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -32,7 +31,7 @@ class RequestRideTest {
     @InjectMock
     RideRepository rideRepository;
     @InjectMock
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
     String VALID_EMAIL;
     Account account;
 
@@ -61,8 +60,8 @@ class RequestRideTest {
 
     @Test
     void shouldRequestRide() {
-        when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(Optional.ofNullable(account));
+        when(accountRepository.getAccountById(any(UUID.class)))
+                .thenReturn(account);
         Ride ride = requestRide.excecute(account.getAccountId().toString(),
                 new RidePath(FROM_COORDINATE, TO_COORDINATE));
         assertThat(ride)
@@ -76,17 +75,6 @@ class RequestRideTest {
     }
 
     @Test
-    void shouldNoteCreateRideWhenAccountNotFound() {
-        when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(Optional.empty());
-        String existingAccount = account.getAccountId().toString();
-        RidePath path =  new RidePath(FROM_COORDINATE, TO_COORDINATE);
-        assertThatThrownBy(() -> requestRide.excecute(existingAccount, path))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("Account not found");
-    }
-
-    @Test
     void shouldNotCreateRideWhenAccountIsNotPassenger() {
         Account account = Account.create(
                 VALID_NAME.value(),
@@ -96,8 +84,8 @@ class RequestRideTest {
                 false,
                 false
         );
-        when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(Optional.of(account));
+        when(accountRepository.getAccountById(any(UUID.class)))
+                .thenReturn(account);
         String existingAccount = account.getAccountId().toString();
         RidePath path =  new RidePath(FROM_COORDINATE, TO_COORDINATE);
         assertThatThrownBy(() -> requestRide.excecute(existingAccount, path))
@@ -114,8 +102,8 @@ class RequestRideTest {
         );
         when(rideRepository.getRideByPassengerId(any(UUID.class)))
                 .thenReturn(ride);
-        when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(Optional.of(account));
+        when(accountRepository.getAccountById(any(UUID.class)))
+                .thenReturn(account);
         String existingAccount = account.getAccountId().toString();
         RidePath path =  new RidePath(FROM_COORDINATE, TO_COORDINATE);
         assertThatThrownBy(() -> requestRide.excecute(existingAccount, path))

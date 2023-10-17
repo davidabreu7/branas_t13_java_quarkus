@@ -1,4 +1,4 @@
-package com.branas.infrastructure.DAO;
+package com.branas.infrastructure.repositories.implementations;
 
 import com.branas.api.ports.PositionRepository;
 import com.branas.domain.entities.Position;
@@ -6,12 +6,14 @@ import com.branas.infrastructure.jpaEntities.PositionEntity;
 import com.branas.infrastructure.repositories.PositionRepositoryJpa;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
+@Transactional
 public class PositionRepositoryImpl implements PositionRepository {
     @Inject
     PositionRepositoryJpa positionRepository;

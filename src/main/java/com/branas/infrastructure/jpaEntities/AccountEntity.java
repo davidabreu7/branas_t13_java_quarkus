@@ -1,10 +1,14 @@
 package com.branas.infrastructure.jpaEntities;
 
+import com.branas.domain.entities.Account;
 import com.branas.domain.valueObjects.Cpf;
 import com.branas.infrastructure.exceptions.ValidationErrorException;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
@@ -12,9 +16,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Getter
+@Setter
 @ToString
-//@Entity
-//@Table(name = "account")
+@Entity
+@Table(name = "account")
 public class AccountEntity {
 
     @Id
@@ -39,42 +44,43 @@ public class AccountEntity {
     }
 
     private AccountEntity(
+            UUID accountId,
             String name,
             String email,
             Cpf cpf,
             String carPlate,
             boolean isPassenger,
-            boolean isDriver
+            boolean isDriver,
+            LocalDate date,
+            boolean isVerified,
+            UUID verificationCode
     ) {
+        this.accountId = accountId;
         this.name = name;
         this.email = email;
         this.cpf = cpf;
         this.carPlate = carPlate;
         this.isPassenger = isPassenger;
         this.isDriver = isDriver;
+        this.date = date;
+        this.isVerified = isVerified;
+        this.verificationCode = verificationCode;
     }
 
-    public static AccountEntity create(String name, String email, Cpf cpf,
-                                       String carPlate, boolean isPassenger, boolean isDriver) {
-        validateAccount(name, email, carPlate, isDriver);
-        AccountEntity account = new AccountEntity(name, email, cpf, carPlate, isPassenger, isDriver);
-        account.accountId = UUID.randomUUID();
-        account.date = LocalDate.now();
-        account.isVerified = false;
-        account.verificationCode = UUID.randomUUID();
-        return account;
-    }
-
-    public static AccountEntity restore(UUID accountId, String name, String email, String cpf,
-                                        String carPlate, boolean isPassenger, boolean isDriver,
-                                        LocalDate date, boolean isVerified, UUID verificationCode) {
-        validateAccount(name, email, carPlate, isDriver);
-        AccountEntity account = new AccountEntity(name, email, new Cpf(cpf), carPlate, isPassenger, isDriver);
-        account.accountId = accountId;
-        account.date = date;
-        account.isVerified = isVerified;
-        account.verificationCode = verificationCode;
-        return account;
+    public static AccountEntity create(Account account) {
+        validateAccount(account.getName(), account.getEmail(), account.getCarPlate(), account.isDriver());
+        return  new AccountEntity(
+                account.getAccountId(),
+                account.getName(),
+                account.getEmail(),
+                account.getCpf(),
+                account.getCarPlate(),
+                account.isPassenger(),
+                account.isDriver(),
+                account.getDate(),
+                account.isVerified(),
+                account.getVerificationCode()
+        );
     }
 
     private static void validateAccount(String name, String email, String carPlate, boolean isDriver) {

@@ -1,6 +1,6 @@
 package com.branas.domain.usecases.ride;
 
-import com.branas.api.ports.AccountDAO;
+import com.branas.api.ports.AccountRepository;
 import com.branas.api.ports.RideRepository;
 import com.branas.domain.entities.Account;
 import com.branas.domain.entities.Ride;
@@ -31,7 +31,7 @@ class AcceptRideTest {
     @InjectMock
     RideRepository rideRepository;
     @InjectMock
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
     String VALID_EMAIL;
     Account account;
 
@@ -77,8 +77,8 @@ class AcceptRideTest {
         );
         when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
-        when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(Optional.of(driver));
+        when(accountRepository.getAccountById(any(UUID.class)))
+                .thenReturn(driver);
         Ride acceptedRide = acceptRide.execute(ride.getRideId().toString(), driver.getAccountId().toString());
         assertThat(acceptedRide)
                 .isNotNull()
@@ -100,8 +100,8 @@ class AcceptRideTest {
 
         when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.empty());
-        when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(Optional.of(driver));
+        when(accountRepository.getAccountById(any(UUID.class)))
+                .thenReturn(driver);
         String driverId = UUID.randomUUID().toString();
         String rideId = UUID.randomUUID().toString();
         assertThatThrownBy(() -> acceptRide.execute(driverId, rideId))
@@ -137,8 +137,8 @@ class AcceptRideTest {
         driver.setAccountId(UUID.randomUUID());
         when(rideRepository.getRideById(any(UUID.class)))
                 .thenReturn(Optional.of(ride));
-        when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(Optional.of(driver));
+        when(accountRepository.getAccountById(any(UUID.class)))
+                .thenReturn(driver);
         when(rideRepository.getRideByDriverId(any(UUID.class)))
                 .thenReturn(ride);
         String driverId = newRide.getRideId().toString();
@@ -147,5 +147,4 @@ class AcceptRideTest {
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Driver already has a ride");
     }
-
 }

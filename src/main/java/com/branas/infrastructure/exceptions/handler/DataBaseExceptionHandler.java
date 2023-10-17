@@ -1,6 +1,7 @@
 package com.branas.infrastructure.exceptions.handler;
 
 import com.branas.infrastructure.exceptions.DataBaseException;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -19,6 +20,9 @@ public class DataBaseExceptionHandler implements ExceptionMapper<DataBaseExcepti
         ErrorResponse errorMessage = new ErrorResponse(UUID.randomUUID().toString(),
                 e.getMessage()
         );
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorMessage).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(errorMessage)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 }

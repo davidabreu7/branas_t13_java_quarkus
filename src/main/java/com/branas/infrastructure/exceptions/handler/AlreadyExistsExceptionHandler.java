@@ -1,6 +1,8 @@
 package com.branas.infrastructure.exceptions.handler;
 
 import com.branas.infrastructure.exceptions.AlreadyExistsException;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -18,6 +20,9 @@ public class AlreadyExistsExceptionHandler implements ExceptionMapper<AlreadyExi
         ErrorResponse errorMessage = new ErrorResponse(UUID.randomUUID().toString(),
                 e.getMessage()
         );
-        return Response.status(Response.Status.CONFLICT).entity(errorMessage).build();
+        return Response.status(Response.Status.CONFLICT)
+                .entity(errorMessage)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 }

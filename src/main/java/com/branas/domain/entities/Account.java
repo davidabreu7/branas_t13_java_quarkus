@@ -2,6 +2,7 @@ package com.branas.domain.entities;
 
 import com.branas.domain.valueObjects.Cpf;
 import com.branas.infrastructure.exceptions.ValidationErrorException;
+import com.branas.infrastructure.jpaEntities.AccountEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -64,10 +65,24 @@ public class Account {
         account.verificationCode = verificationCode;
         return account;
     }
+    public static Account restore(AccountEntity accountEntity) {
+        return Account.restore(
+                accountEntity.getAccountId(),
+                accountEntity.getName(),
+                accountEntity.getEmail(),
+                accountEntity.getCpf().getValue(),
+                accountEntity.getCarPlate(),
+                accountEntity.isPassenger(),
+                accountEntity.isDriver(),
+                accountEntity.getDate(),
+                accountEntity.isVerified(),
+                accountEntity.getVerificationCode()
+        );
+    }
 
     private static void validateAccount(String name, String email, String carPlate, boolean isDriver) {
         if (!name.matches("[a-zA-Z]+ [a-zA-Z]+"))
-            throw new ValidationErrorException("Invalid name");
+            throw new ValidationErrorException("Invalid name: must have name and surname");
         if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"))
             throw new ValidationErrorException("Invalid email");
         if (isDriver && (!carPlate.matches("[A-Z]{3}[0-9]{4}")))

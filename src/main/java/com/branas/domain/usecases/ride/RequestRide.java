@@ -1,6 +1,6 @@
 package com.branas.domain.usecases.ride;
 
-import com.branas.api.ports.AccountDAO;
+import com.branas.api.ports.AccountRepository;
 import com.branas.api.ports.RideRepository;
 import com.branas.domain.DTO.RidePath;
 import com.branas.domain.entities.Account;
@@ -19,11 +19,10 @@ public class RequestRide {
     @Inject
     RideRepository rideRepository;
     @Inject
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
 
     public Ride excecute(String accountId, RidePath ridePath) {
-        Account account = accountDAO.getAccountById(UUID.fromString(accountId))
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+        Account account = accountRepository.getAccountById(UUID.fromString(accountId));
         validateAccount(account);
         Ride ride = Ride.create(
                 account.getAccountId(),

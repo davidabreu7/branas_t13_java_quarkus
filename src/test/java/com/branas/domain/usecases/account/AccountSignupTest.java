@@ -1,18 +1,15 @@
 package com.branas.domain.usecases.account;
 
-import com.branas.api.ports.AccountDAO;
+import com.branas.api.ports.AccountRepository;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
-import com.branas.domain.usecases.account.AccountSignup;
 import com.branas.domain.valueObjects.Cpf;
-import com.branas.infrastructure.exceptions.ResourceNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.branas.utils.TestValues.*;
@@ -24,7 +21,7 @@ class AccountSignupTest {
 
     static String VALID_EMAIL;
     @InjectMock
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
     @Inject
     AccountSignup accountSignup;
 
@@ -52,14 +49,13 @@ class AccountSignupTest {
                 validPassenger.isDriver()
         );
 
-       when(accountDAO.getAccountByEmail(validPassenger.email()))
+       when(accountRepository.getAccountByEmail(validPassenger.email()))
                .thenReturn(null);
         UUID accountId = accountSignup.execute(validPassenger);
         account.setAccountId(accountId);
-        when(accountDAO.getAccountById(accountId))
-                .thenReturn(Optional.of(account));
-        Account accountSaved = accountDAO.getAccountById(accountId)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+        when(accountRepository.getAccountById(accountId))
+                .thenReturn((account));
+        Account accountSaved = accountRepository.getAccountById(accountId);
         assertThat(accountSaved).isNotNull()
                 .hasFieldOrPropertyWithValue("accountId", accountId)
                 .hasFieldOrPropertyWithValue("isPassenger", validPassenger.isPassenger())
@@ -74,7 +70,7 @@ class AccountSignupTest {
                 .email(VALID_EMAIL)
                 .cpf(INVALID_CPF.value())
                 .build();
-        when(accountDAO.getAccountByEmail(input.email()))
+        when(accountRepository.getAccountByEmail(input.email()))
                 .thenReturn(null);
         try {
            accountSignup.execute(input);
@@ -91,7 +87,7 @@ class AccountSignupTest {
                 .email(VALID_EMAIL)
                 .cpf(VALID_CPF.value())
                 .build();
-        when(accountDAO.getAccountByEmail(input.email()))
+        when(accountRepository.getAccountByEmail(input.email()))
                 .thenReturn(null);
         try {
             accountSignup.execute(input);
@@ -108,7 +104,7 @@ class AccountSignupTest {
                 .email(INVALID_EMAIL.value())
                 .cpf(VALID_CPF.value())
                 .build();
-        when(accountDAO.getAccountByEmail(input.email()))
+        when(accountRepository.getAccountByEmail(input.email()))
                 .thenReturn(null);
         try {
             accountSignup.execute(input);
@@ -133,7 +129,7 @@ class AccountSignupTest {
                 input.isPassenger(),
                 input.isDriver()
         );
-        when(accountDAO.getAccountByEmail(input.email()))
+        when(accountRepository.getAccountByEmail(input.email()))
                 .thenReturn(account);
         try {
             accountSignup.execute(input);
@@ -159,13 +155,13 @@ class AccountSignupTest {
                 validDriver.isPassenger(),
                 validDriver.isDriver()
         );
-         when(accountDAO.getAccountByEmail(validDriver.email()))
+         when(accountRepository.getAccountByEmail(validDriver.email()))
                  .thenReturn(null);
         UUID accountIdSaved = accountSignup.execute(validDriver);
         account.setAccountId(accountIdSaved);
-        when(accountDAO.getAccountById(accountIdSaved))
-                .thenReturn(Optional.of(account));
-        Account accountSaved = accountDAO.getAccountById(accountIdSaved).orElseThrow( () -> new ResourceNotFoundException("Account not found"));
+        when(accountRepository.getAccountById(accountIdSaved))
+                .thenReturn(account);
+        Account accountSaved = accountRepository.getAccountById(accountIdSaved);
         assertThat(accountSaved)
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("accountId", accountIdSaved)
@@ -182,7 +178,7 @@ class AccountSignupTest {
                 .cpf(VALID_CPF.value())
                 .carPlate(INVALID_PLATE.value())
                 .build();
-        when(accountDAO.getAccountByEmail(input.email()))
+        when(accountRepository.getAccountByEmail(input.email()))
                 .thenReturn(null);
 
        try {

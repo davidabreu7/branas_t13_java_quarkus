@@ -1,6 +1,6 @@
 package com.branas.domain.usecases.account;
 
-import com.branas.api.ports.AccountDAO;
+import com.branas.api.ports.AccountRepository;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
 import com.branas.domain.valueObjects.Cpf;
@@ -25,7 +25,7 @@ class GetAccountTest {
     @Inject
     GetAccount getAccount;
     @InjectMock
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
 
     String VALID_EMAIL;
     Account account;
@@ -52,22 +52,12 @@ class GetAccountTest {
     @Test
     void shouldGetAccount() {
         UUID accountId = UUID.randomUUID();
-        when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(Optional.of(account));
+        when(accountRepository.getAccountById(any(UUID.class)))
+                .thenReturn(account);
         account = getAccount.execute(accountId);
         account.setAccountId(accountId);
         Assertions.assertThat(account)
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("accountId", accountId);
-    }
-
-    @Test
-    void shouldNotGetAccount() {
-        UUID accountId = UUID.randomUUID();
-        when(accountDAO.getAccountById(any(UUID.class)))
-                .thenReturn(Optional.empty());
-        Assertions.assertThatThrownBy(() -> getAccount.execute(accountId))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Account not found");
     }
 }

@@ -1,8 +1,9 @@
-package com.branas.infrastructure.DAO;
+package com.branas.infrastructure.repositories.implementations;
 
 import com.branas.domain.enums.RideStateEnum;
 import com.branas.domain.valueObjects.Coordinate;
 import com.branas.domain.entities.Ride;
+import com.branas.infrastructure.repositories.implementations.RideRepositoryImpl;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;

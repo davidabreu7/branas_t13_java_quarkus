@@ -2,12 +2,12 @@ package com.branas.api.ports;
 
 import com.branas.domain.entities.Account;
 
-import java.util.Optional;
 import java.util.UUID;
 
-public interface AccountDAO {
+public interface AccountRepository {
 
     public void save(Account account);
     public Account getAccountByEmail(String email);
-    public Optional<Account> getAccountById(UUID accountId);
+    public Account getAccountById(UUID accountId);
+    public Boolean existsByEmail(String email);
 }

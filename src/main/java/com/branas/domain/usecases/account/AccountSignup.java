@@ -1,6 +1,6 @@
 package com.branas.domain.usecases.account;
 
-import com.branas.api.ports.AccountDAO;
+import com.branas.api.ports.AccountRepository;
 import com.branas.domain.DTO.AccountInput;
 import com.branas.domain.entities.Account;
 import com.branas.domain.valueObjects.Cpf;
@@ -14,15 +14,14 @@ import java.util.UUID;
 public class AccountSignup {
 
     @Inject
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
 
     public void sendEmail(String email, String subject, String message) {
         System.out.println(email + " " + subject + " " + message);
     }
 
     public UUID execute(AccountInput input) {
-                Account existingAccount = accountDAO.getAccountByEmail(input.email());
-                if (existingAccount != null)
+                if (accountRepository.existsByEmail(input.email()))
                     throw new AlreadyExistsException("Account already exists");
                 Account account = Account.create(
                         input.name(),
@@ -32,7 +31,7 @@ public class AccountSignup {
                         input.isPassenger(),
                         input.isDriver()
                 );
-                    accountDAO.save(account);
+                    accountRepository.save(account);
                     sendEmail(account.getEmail(), "Verification", "Please verify your code at first login " + account.getVerificationCode());
                     return account.getAccountId();
     }
